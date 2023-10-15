@@ -1,0 +1,101 @@
+
+% Tesi D.S.I. - modello preso da
+% Stanford University PhD thesis style -- modifications to the report style
+
+\documentclass[12pt,italian,oneside]{book}
+\usepackage{tesi}
+
+% CORSO DI LAUREA:
+\def\myCDL{Corso di Laurea magistrale in Informatica}
+
+% TITOLO TESI:
+\def\myTitle{Algoritmi di classificazione basati su vettori di supporto per la produzione di modelli succinti}
+
+% AUTORE:
+\def\myName{Antonio Belotti}
+\def\myMat{Matricola 960822}
+
+% RELATORE E CORRELATORE:
+\def\myRefereeA{Prof. Dario Malchiodi}
+\def\myRefereeB{Prof. Alberto Ceselli}
+\def\myRefereeC{Prof. Michele Barbato}
+
+% ANNO ACCADEMICO
+\def\myYY{2022-2023}
+
+% Il seguente comando introduce un elenco delle figure dopo l'indice (facoltativo)
+\figurespagetrue
+
+% Il seguente comando introduce un elenco delle tabelle dopo l'indice (facoltativo)
+\tablespagetrue
+
+% Package di formato
+\usepackage[a4paper]{geometry}		% Formato del foglio
+\usepackage[italian]{babel}			% Supporto per l'italiano
+\usepackage[utf8]{inputenc}			% Supporto per UTF-8
+\usepackage[a-1b]{pdfx}			% File conforme allo standard PDF-A (obbligatorio per la consegna)
+
+% Package per la grafica
+\usepackage{graphicx}				% Funzioni avanzate per le immagini
+\usepackage{hologo}					% Bibtex logo with \hologo{BibTeX}
+%\usepackage{epsfig}				% Permette immagini in EPS
+%\usepackage{xcolor}				% Gestione avanzata dei colori
+
+
+% Package tipografici
+\usepackage{amssymb,amsmath,amsthm} % Simboli matematici
+%\usepackage{listings}				% Scrittura di codice
+
+% Package ipertesto
+\usepackage{url}					% Visualizza e rendere interattii gli URL
+\usepackage[pdfa]{hyperref}		    % Rende interattivi i collegamenti interni
+
+\usepackage[italiano,ruled, lined, linesnumbered, longend]{algorithm2e}            % pseudocodice
+\DontPrintSemicolon
+
+\usepackage[short]{optidef}         % Problemi di ottimizzazione
+\usepackage{etoolbox}
+\robustify{\label}
+
+\usepackage[italian]{cleveref}  % aggiunge automaticamente anche "capitolo" o "eq." in base a cosa ci si sta riferendo
+
+
+% 
+% norma di un vettore
+\newcommand{\norm}[1]{\|#1\|}
+
+% derivata parziale
+\newcommand{\pd}[2]{\frac{\partial{#1}}{\partial{#2}}}
+
+% Vec in grassetto invece che con freccia
+\renewcommand\vec{\mathbf}
+
+
+\makeindex
+
+\begin{document}
+
+\frontespizio
+\beforepreface
+    % qui ringraziamenti e prefazione volendo
+\afterpreface
+    % \listoftables
+    % \listoffigures
+\frontmatter
+    \input{capitoli/0_introduzione}
+\mainmatter
+    \input{capitoli/1_AI_ML}
+    \input{capitoli/2_SVC}
+    \input{capitoli/3_sparse_SVC}
+    \input{capitoli/4_esperimenti_e_risultati}
+\backmatter
+    \input{capitoli/conclusioni}
+
+\bibliographystyle{unsrt}
+\bibliography{bibliografia}
+\addcontentsline{toc}{chapter}{Bibliografia}
+
+\end{document}
+
+
+ 

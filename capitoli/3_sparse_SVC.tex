@@ -1,0 +1,121 @@
+\chapter{Sparse Support Vector Classifiers}\label{chap:sparse_svc}
+Questo capitolo presenta un'analisi dei metodi proposti in letteratura per ottenere modelli SVC con un numero ridotto di vettori di supporto, chiamati \emph{sparse SVC} o in generale \emph{sparse SVM}.
+I modelli SVM nella formulazione originale sono già di per sè considerati modelli sparsi, dato che utilizzano una rappresentazione sparsa dei dati di addestramento per eseguire predizioni. Si utilizza comunque il termine \emph{sparse SVM} per indicare approcci che promuovono la sparsità dei vettori di supporto esplicitamente e consentono in alcuni casi di impostare esplicitamente un limite numerico. 
+%Gli approcci possibili sono numerosi: 
+Nella~\cref{sec:riduzione_post_processing} vedremo alcune proposte per ridurre il numero di vettori di supporto a posteriori. nella ...
+
+Nella~\cref{sec:our_budgeted_svm} si descrive infine la modellazione proposta in questa tesi per produrre \emph{sparse SVC}.
+
+\section{Riduzione post addestramento}\label{sec:riduzione_post_processing}
+Tra i primi metodi proposti per ridurre il numero di vettori di supporto, si trovano degli approcci che modificano classificatori già addestrati. Rientra in questa categoria il \emph{reduced set method} ~\cite{reduced_set_method}. Consideriamo un classificatore già addestrato su dati presi dal dominio $\mathcal{L}=\mathcal{R}^k$: la predizione della classe per il punto $\Vec{x}_{new}$ mai visto in fase di addestramento dipende dal risultato di 
+\begin{equation}\label{eq:before_reduced_set}
+\Vec{w}\cdot\Vec{x}_{new} = \sum_{i=1}^{N_s} \alpha_iy_i\Vec{x}_i \cdot \Vec{x}_{new} = \sum_{i=1}^{N_s} \alpha_iy_iK(\Vec{x}_i, \Vec{x}_{new})
+\end{equation}
+dove $N_s$ è il numero di vettori di supporto e le $\alpha_i$ sono i moltiplicatori lagrangiani. Il \emph{reduced set method} consiste nell'identificare un insieme di punti $\Vec{z}_a \in \mathcal{L}$ con $a=1,...,N_z$ e dei corrispettivi pesi $\gamma_a \in \mathcal{R}$ che identificano $\Vec{w}^{'} = \sum_{a=1}^{N_z}\gamma_a\cdot\Phi(\Vec{z}_a)$ tale per cui la distanza $p = ||\Vec{w}-\Vec{w}^{'}||$ sia minima. La coppia $\{\gamma_a, \Vec{z}_a\}$ è il \emph{reduced set}, per cui si può rimpiazzare~\cref{eq:before_reduced_set} con
+\begin{equation}\label{eq:reduced_set}
+\Vec{w}^{'} \cdot \Vec{x}_{new} = \sum_{a=1}^{N_z}\gamma_a \Vec{z}_a\cdot \Vec{x}_{new} = \sum_{a=1}^{N_z}\gamma_a K(\Vec{z}_a, \Vec{x}_{new})
+\end{equation}
+approssimando il margine di separazione originale.
+Idealmente si vorrebbe trovare un \emph{reduced set} di dimensione $N_z << N_s$ per cui le performance degradino di una quantità accettabile, potenzialmente nulla.
+Nella prativa, trovare il \emph{reduced set} significa minimizzare la distanza $p$.
+
+Sempre Burges, propone in ~\cite{burges_improving_accuracy} un approccio che combina il reduced set method con un ulteriore \emph{virtual support vector method}. La nuova aggiunta, consiste nell'introdurre delle invarianti note relative al problema trattato, applicando una trasformazione ai vettori di supporto trovati dopo il primo addestramento del modello. Combinando queste due tecniche, gli autori ottengono miglioramento nelle capacità di generalizzazione combinato con un miglioramento delle performance in fase di testing dovuto alla compressione del modello. Questo approccio richiede però una conoscenza specifica relativa al problema trattato che consente di applicare una trasformazione sensata sui vettori di supporto.
+
+\section{Riduzione con addestramento on-line}
+I \emph{support vector classifier} possono essere usati anche per addestramento \emph{on-line}, scenario in cui i dati di addestramento sono forniti col passare del tempo. Considerando che la quantità di dati d'addestramento non è nota a priori, risulta fondamentale inserire delle tecniche per contenere il numero di vettori di supporto, che tipicamente cresce al crescere dei dati di addestramento \cite{}. Per questo motivo, esistono numerosi approcci per promuovere la sparsità in contesti \emph{on-line}.
+
+L'algoritmo \emph{perceptron} ~\cite{1958_perceptron} è un algoritmo di addestramento \emph{on-line} originariamente utilizzato per addestrare il modello omonimo (reti neurali con uno solo neurone), ma che può essere usato per addestrare support vector machine. \cite{2003_online_classification_on_a_budget} propone una variante che mantiene un insieme di dimensione variabile dei vettori di supporto. Viene battezzata \emph{variable size cache} perché non viene imposto un limite fisso alla sua dimensione (\emph{variable size} appunto) e gli elementi già presenti possono essere rimossi secondo una strategia adatta, proprio come una \emph{cache} generica. Questi algoritmi di gestione della \emph{cache} verranno riprese in lavori successivi.
+Formalmente, al tempo $t$ l'algoritmo riceve un nuovo dato $\Vec{x}_t$ con corrispettivo label $y_t$: si calcola $s_t = \sum_{i=1}^{m} \alpha_iy_iK(\Vec{x}_i, \Vec{x}_t)$ da cui si ricava la predizione $sign(s_t)$. 
+Per decidere se $\Vec{x}_t$ debba diventare un nuovo vettore di supporto, si testa la condizione $y_ts_t \leq \beta_t$: in caso positivo si aggiunge $\Vec{x}_t$ come vettore di supporto. La strategia per effettuare questa aggiunta dipende dall'algoritmo specifico. Per prima cosa, serve assegnare un valore ad $\alpha_t$. Si modifica poi il margine di separazione $\Vec{w}_{t+1} = \Vec{w}_t + \alpha_ty_t\Vec{x}_t$. L'ultimo passo opzionale consiste nello scalare la norma del nuovo margine $\Vec{w}_{t+1} \leftarrow c_t\Vec{w}_{t+1}$ per un certo $c_t > 0$. L'algoritmo perceptron nella forma originale usa come parametri $\beta_t=0, \alpha_t=1, c_t=1$. Per limitare il numero di vettori di supporto, una volta aggiunto $\Vec{x}_t$, si rimuovono tutti gli $\Vec{x}_i$ per cui $y_i(\Vec{w} - \alpha_iy_i\Vec{x}_i)\leq \beta$. Questo approccio non impone una dimensione fissa al numero di vettori di supporto e richiede di ricalcolare per ogni vettore di supporto la condizione di mantenimento ogni volta che si aggiunge un nuovo vettore di supporto. 
+Sempre in~\cite{2003_online_classification_on_a_budget}, si definisce un \emph{bound} teorico alla dimensione della cache.
+
+
+Seguendo un approccio analogo, sono state proposte negli anni diverse varianti dell'algoritmo perceptron.
+\cite{2005_forgetron}~propone il \emph{forgetron}, una variante che utilizza una strategia di rimozione dei vettori di supporto. Per ogni iterazione, se il modella classifica erroneamente, si aggiornano i vettori di supporto in tre passaggi: si esegue l'algoritmo perceptron classico; si scalano i coefficienti dei vettori di supporto; si rimuove il vettore di supporto con il coefficiente più piccolo.
+%
+\cite{2007_random_removal}~propone il \emph{random perceptron}, una variante in cui la rimozione di un vettore di supporto viene effettuata casualmente. 
+%
+\cite{2008_projectron}~propone il \emph{projectron}, una variante che utilizza una strategia di proiezione. 
+``The new vector is added to the support set if its
+projection onto the linear span of others in the feature space exceeds a predefined threshold,
+or otherwise its information is kept through the projection.'' **ok**
+%
+
+**merging strategy**
+
+%
+
+
+
+\section{Riduzione con addestramento off-line}
+Tutti gli approcci visti in precedenza per addestramento on-line possono essere adattati per un approccio off-line, per esempio fornendo artificiosamente il set di addestramento come uno \emph{stream} di dati. Rimane comunque sensato sviluppare approcci dedicati per addestramento off-line, cercando di sfruttare la disponibilità dell'intero dataset come un vantaggio e non come una limitazione.
+
+Molti approcci per la riduzione del numero di vettori di supporto durante l'addestramento \emph{off-line} si basano sull'osservazione che i vettori di supporto erroneamente classificati, ovvero vettori di supporto con le rispettive variabili di \emph{slack} $>0$, influiscono negativamente sul valore della funzione obiettivo, oltre che richiedere spazio per essere memorizzati ed influire sul costo computazione di ogni inferenza. Un approccio per ridurre l'effetto degli \emph{outlier} è la formulazione del problema chiamata L2-svm \cref{eq:l2svc}. La funzione obiettivo è modificata in modo che le variabili di slack non compaiano come norma L1 ma compaiano invece come norma L2.
+\begin{equation}
+\label{eq:l2svc}
+\begin{aligned}
+& \min_{w,b}    && \frac{1}{2}\norm{\Vec{w}}^2 + \frac{C}{2}\sum_{i=0}^{m} \xi_i^2 \\
+& \textrm{s.t.} && y_i(\Vec{w}\cdot \Vec{x}_i + b) - 1 + \xi_i \geq 0 && i=1,\dots,m \\
+&               && \xi_i \geq 0  && i=1,\dots,m 
+\end{aligned}
+\end{equation}
+L'effetto è quello di penalizzare maggiormente la selezione di vettori di supporto con relative variabili di slack di valore $>1$.
+Si riportano di seguito alcuni approcci simili, in cui si modifica il termine della funzione obiettivo relativo alle variabili di slack.
+
+~\cite{2005_penalizing_outliers} propone una procedura di addestramento basata sull'osservazione che l'iperpiano di separazione tra le due classi viene reso inutilmente complicato a causa di \emph{outlier}. Per risolvere questi problemi, si riformula la funzione obiettivo del problema primale, introducendo una funzione di penalità non lineare sulle variabili di \emph{slack}, ottenendo il problema~\cref{eq:adaptively_penalizing_outliers}.
+\begin{equation}\label{eq:adaptively_penalizing_outliers}
+\begin{aligned}
+& \min_{\Vec{w}}    && \frac{1}{2}\norm{\Vec{w}}^2 +C \sum_{i=1}^{m}erf(\xi_i, \sigma) \\
+& \textrm{s.t.}     && y_i(\Vec{w}\cdot\Phi(\Vec{x}_i) + b) \geq 1 -\xi_i && i=1,\dots,m\\
+&                   && \xi_i \geq 0  && i=1,\dots,m 
+\end{aligned}
+\end{equation}
+La funzione di penalità proposta è 
+\[
+erf(\xi, \sigma) = \frac{2}{\sqrt{\pi}\sigma} \int_{0}^{\xi}e^{\frac{-z^2}{\sigma^2}} dz.
+\]
+%
+Il problema~\cref{eq:adaptively_penalizing_outliers} può comunque essere risolto considerando il duale, rendendo questo approccio relativamente facile da implementare e trattare con tecniche note.
+
+% \cite{2001_ssvm_smooth_svm} propone di rimpiazzare la norma l1 delle variabili di \emph{slack} nella funzione obiettivo del problema primale \emph{soft-margin} con il quadrato della norma l2. Per rendere la funzione obiettivo doppiamente differenziabile (?) utilizza una smooth approximation function (?) così il problema può essere risolto con un fast newton method (?). 
+
+\cite{2006_svm_on_a_budget}
+
+
+
+\section{Feature selection durante addestramento}
+
+
+
+\section{Budgeted SVC}\label{sec:our_budgeted_svm}
+Per limitare il numero di vettori di supporto, si introducono $m$ variabili continue che si comportano però come variabili binarie. Ogni $\Vec{x}_i$ avrà associata una $\gamma_i$ che avrà un valore $\approx1$ se $\Vec{x}_i$ è scelto come vettore di supporto; avrà un valore $\approx0$ in caso contrario.
+La prima proposta di riformulazione del problema duale è
+\begin{equation}\label{eq:budget_svc:continuous_gamma_formulation}
+\begin{aligned}
+& \max_{\alpha}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j) +P(\gamma_1, \dots, \gamma_m)\\
+& \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0                   \\
+&               && 0 \leq \alpha_i \leq \gamma_iC   && i=1,\dots,m  \\
+&               && 0 \leq \gamma_i \leq 1           && i=1, \dots, m\\
+&               && \sum_{i=1}^{m} \gamma_i \leq B.                   \\
+\end{aligned}
+\end{equation}
+La funzione $P$ deve essere scelta in modo da forzare le variabili $\gamma_i$ vicino a $0$ o $1$, simulando una variabile binaria.
+Una possibile $P$ potrebbe essere 
+$$P(\gamma_1, \dots, \gamma_n) = \prod_i -\gamma_i (1 - \gamma_i)$$
+oppure 
+$$P(\gamma_1, \dots, \gamma_n) = \prod_i \left( \gamma_i^{\gamma_i} (1 - \gamma_i)^{1 - \gamma_i} - 1 \right).$$
+%
+%
+L'utilizzo di variabili $\gamma_i$ continue, consentirebbe l'utilizzo di risolutori basati sul metodo della discesa del gradiente, il che sarebbe vantaggioso a livello pratico sia per le buone performance sia per la facilità di implementazione. (?)
+Per semplicità, i primi esperimenti sono eseguiti su una formulazione leggermente diversa che definisce le variabili $\gamma_i$ come variabili booleane
+\begin{equation}\label{eq:budget_svc:binary_gamma_formulation}
+\begin{aligned}
+& \max_{\alpha}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j)\\
+& \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0                   \\
+&               && 0 \leq \alpha_i \leq \gamma_iC   && i=1,\dots,m  \\
+&               && \sum_{i=1}^{m} \gamma_i \leq B                   \\
+&               && \gamma_i \in \{0,1\}.                            \\
+\end{aligned}
+\end{equation}
+Questa scelta forza nella pratica ad utilizzare un risolutore in grado di trattare problemi con variabili intere.
+
