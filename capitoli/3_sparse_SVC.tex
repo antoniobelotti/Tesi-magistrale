@@ -1,121 +1,274 @@
-\chapter{Sparse Support Vector Classifiers}\label{chap:sparse_svc}
-Questo capitolo presenta un'analisi dei metodi proposti in letteratura per ottenere modelli SVC con un numero ridotto di vettori di supporto, chiamati \emph{sparse SVC} o in generale \emph{sparse SVM}.
-I modelli SVM nella formulazione originale sono già di per sè considerati modelli sparsi, dato che utilizzano una rappresentazione sparsa dei dati di addestramento per eseguire predizioni. Si utilizza comunque il termine \emph{sparse SVM} per indicare approcci che promuovono la sparsità dei vettori di supporto esplicitamente e consentono in alcuni casi di impostare esplicitamente un limite numerico. 
-%Gli approcci possibili sono numerosi: 
-Nella~\cref{sec:riduzione_post_processing} vedremo alcune proposte per ridurre il numero di vettori di supporto a posteriori. nella ...
+\chapter{Sparse Support Vector Classifier}\label{chap:sparse_svc}
+In questo capitolo si presenta un'analisi dei metodi proposti in letteratura per ottenere modelli SVC con un numero ridotto di vettori di supporto, chiamati \emph{sparse SVC} o in generale \emph{sparse SVM}.
+I modelli SVM nella formulazione originale sono già di per sé considerati modelli parsimoniosi, dato che utilizzano un sottoinsieme dei dati di addestramento per eseguire predizioni. 
+Si utilizza comunque il termine \emph{sparse SVM} per indicare approcci che promuovono la parsimonia dei vettori di supporto e consentono in alcuni casi di impostare esplicitamente un limite al numero di vettori di supporto. 
+Gli approcci presenti in letteratura sono vari e numerosi:
+nel~\Cref{sec:sparsesvm:post_processing} si espongono alcuni approcci per ridurre il numero di vettori di supporto di un modello a posteriori, ad addestramento già effettuato; nel~\Cref{sec:sparsesvm:on-line} si espongono alcuni approcci per l'addestramento \emph{on-line}; nel~\Cref{sec:sparsesmv:off-line} si espongono alcuni approcci per l'addestramento \emph{off-line}; nel~\Cref{sec:sparsesvm:feature-selection} si espongono dei metodi per eseguire \emph{feature selection} durante la procedura di addestramento; infine, nel~\Cref{sec:our_budgeted_svm} si descrive l'approccio proposto in questa tesi per produrre modelli SVC parsimoniosi.
 
-Nella~\cref{sec:our_budgeted_svm} si descrive infine la modellazione proposta in questa tesi per produrre \emph{sparse SVC}.
-
-\section{Riduzione post addestramento}\label{sec:riduzione_post_processing}
-Tra i primi metodi proposti per ridurre il numero di vettori di supporto, si trovano degli approcci che modificano classificatori già addestrati. Rientra in questa categoria il \emph{reduced set method} ~\cite{reduced_set_method}. Consideriamo un classificatore già addestrato su dati presi dal dominio $\mathcal{L}=\mathcal{R}^k$: la predizione della classe per il punto $\Vec{x}_{new}$ mai visto in fase di addestramento dipende dal risultato di 
+\section{Riduzione post addestramento}\label{sec:sparsesvm:post_processing}
+Tra i primi metodi presenti in letteratura per ridurre il numero di vettori di supporto si trovano degli approcci che modificano classificatori già addestrati. 
+Rientra in questa categoria il \emph{reduced set method}~\cite{reduced_set_method}.
+Si consideri un classificatore già addestrato con un kernel $K$ (corrispondente ad una funzione $\Phi$) su dati presi dal dominio $\mathcal{L}=\mathbb{R}^k$. Gli indici dei dati utilizzati come vettori di supporto sono contenuti nell'insieme $S$ e quindi $N_s=|S|$. 
+La predizione della classe per un punto $\Vec{x}_\text{new}$ mai visto in fase di addestramento dipende dalla quantità
 \begin{equation}\label{eq:before_reduced_set}
-\Vec{w}\cdot\Vec{x}_{new} = \sum_{i=1}^{N_s} \alpha_iy_i\Vec{x}_i \cdot \Vec{x}_{new} = \sum_{i=1}^{N_s} \alpha_iy_iK(\Vec{x}_i, \Vec{x}_{new})
+\Vec{w}^*\cdot\Phi(\Vec{x}_\text{new}) = \sum_{i=1}^{S} \alpha^*_iy_i\Phi(\Vec{x}_i) \cdot \Phi(\Vec{x}_\text{new}) = \sum_{i=1}^{S} \alpha^*_iy_iK(\Vec{x}_i, \Vec{x}_\text{new})
 \end{equation}
-dove $N_s$ è il numero di vettori di supporto e le $\alpha_i$ sono i moltiplicatori lagrangiani. Il \emph{reduced set method} consiste nell'identificare un insieme di punti $\Vec{z}_a \in \mathcal{L}$ con $a=1,...,N_z$ e dei corrispettivi pesi $\gamma_a \in \mathcal{R}$ che identificano $\Vec{w}^{'} = \sum_{a=1}^{N_z}\gamma_a\cdot\Phi(\Vec{z}_a)$ tale per cui la distanza $p = ||\Vec{w}-\Vec{w}^{'}||$ sia minima. La coppia $\{\gamma_a, \Vec{z}_a\}$ è il \emph{reduced set}, per cui si può rimpiazzare~\cref{eq:before_reduced_set} con
+dove gli $\alpha^*_i$ sono i moltiplicatori lagrangiani ottimi. 
+Il \emph{reduced set method} consiste nell'identificare un insieme di punti $\Vec{z}_a \in \mathcal{L}$ con $a=1,\dots,N_z$ e dei corrispettivi pesi $\gamma_a \in \mathbb{R}$ che identificano 
+\begin{equation*}
+    \Vec{w}^{'} = \sum_{a=1}^{N_z}\gamma_a\cdot\Phi(\Vec{z}_a),
+\end{equation*} 
+tale per cui la distanza 
+\begin{equation}\label{eq:reduced_set_p_distance}
+    p = ||\Vec{w}^*-\Vec{w}^{'}||
+\end{equation} 
+sia minima. Si ottiene quindi con $\Vec{w}^{'}$ un'approssimazione della superficie di separazione originale.
+L'insieme delle coppie $\{\gamma_a, \Vec{z}_a\}$, $a=1,\dots, N_z$ è il \emph{reduced set}, un insieme di elementi e corrispettivi moltiplicatori sintetici, per cui si può rimpiazzare l'~\cref{eq:before_reduced_set} con 
 \begin{equation}\label{eq:reduced_set}
-\Vec{w}^{'} \cdot \Vec{x}_{new} = \sum_{a=1}^{N_z}\gamma_a \Vec{z}_a\cdot \Vec{x}_{new} = \sum_{a=1}^{N_z}\gamma_a K(\Vec{z}_a, \Vec{x}_{new})
+\Vec{w}^{'} \cdot \Phi(\Vec{x}_\text{new}) = \sum_{a=1}^{N_z}\gamma_a \Phi(\Vec{z}_a) \cdot \Phi(\Vec{x}_\text{new}) = \sum_{a=1}^{N_z}\gamma_a K(\Vec{z}_a, \Vec{x}_\text{new}).
 \end{equation}
-approssimando il margine di separazione originale.
-Idealmente si vorrebbe trovare un \emph{reduced set} di dimensione $N_z << N_s$ per cui le performance degradino di una quantità accettabile, potenzialmente nulla.
-Nella prativa, trovare il \emph{reduced set} significa minimizzare la distanza $p$.
+Idealmente si vorrebbe trovare un \emph{reduced set} di dimensione $N_z \ll N_s$ per cui le performance degradino di una quantità accettabile, potenzialmente nulla.
+Nella pratica trovare il \emph{reduced set} significa minimizzare la distanza $p$ in~\Cref{eq:reduced_set_p_distance}. 
+In altre parole il \emph{reduced set method} rimpiazza i vettori di supporto originali e i corrispettivi moltiplicatori lagrangiani con una quantità idealmente molto ridotta di vettori di supporto sintetici ed altrettanti moltiplicatori ``lagrangiani'' sintetici. 
+%TODO: è giusto lasciare le virgolette? Perché non sono tecnicamente moltiplicatori lagrangiani? no?
 
-Sempre Burges, propone in ~\cite{burges_improving_accuracy} un approccio che combina il reduced set method con un ulteriore \emph{virtual support vector method}. La nuova aggiunta, consiste nell'introdurre delle invarianti note relative al problema trattato, applicando una trasformazione ai vettori di supporto trovati dopo il primo addestramento del modello. Combinando queste due tecniche, gli autori ottengono miglioramento nelle capacità di generalizzazione combinato con un miglioramento delle performance in fase di testing dovuto alla compressione del modello. Questo approccio richiede però una conoscenza specifica relativa al problema trattato che consente di applicare una trasformazione sensata sui vettori di supporto.
+Si trova in~\cite{burges_improving_accuracy} un approccio che combina il \emph{reduced set method} con un ulteriore \emph{virtual support vector method}, che consiste nell'introdurre delle invarianti note relative al problema trattato, applicando una trasformazione ai vettori di supporto trovati dopo il primo addestramento del modello. 
+Combinando queste due tecniche, gli autori ottengono un miglioramento nelle capacità di generalizzazione ed un miglioramento dell'efficienza in fase di predizione. Le migliori capacità di generalizzazione sono merito del \emph{virtual support vector method}; l'efficienza in fase di predizione è merito del \emph{reduced set method}.
+Questo approccio richiede però una conoscenza specifica relativa al problema trattato che consenta di applicare una trasformazione sensata sui vettori di supporto. Non vengono fornite delle trasformazioni generiche applicabili su qualsiasi tipo di dato. 
 
-\section{Riduzione con addestramento on-line}
-I \emph{support vector classifier} possono essere usati anche per addestramento \emph{on-line}, scenario in cui i dati di addestramento sono forniti col passare del tempo. Considerando che la quantità di dati d'addestramento non è nota a priori, risulta fondamentale inserire delle tecniche per contenere il numero di vettori di supporto, che tipicamente cresce al crescere dei dati di addestramento \cite{}. Per questo motivo, esistono numerosi approcci per promuovere la sparsità in contesti \emph{on-line}.
+Un approccio simile al \emph{reduced set method}, ma meno oneroso dal punto di vista computazionale, è quello proposto in~\cite{2005_merging_strategy}, dove coppie di vettori di supporto originali sono iterativamente sostituite da un singolo vettore di supporto sintetico, a seconda di particolari condizioni. 
 
-L'algoritmo \emph{perceptron} ~\cite{1958_perceptron} è un algoritmo di addestramento \emph{on-line} originariamente utilizzato per addestrare il modello omonimo (reti neurali con uno solo neurone), ma che può essere usato per addestrare support vector machine. \cite{2003_online_classification_on_a_budget} propone una variante che mantiene un insieme di dimensione variabile dei vettori di supporto. Viene battezzata \emph{variable size cache} perché non viene imposto un limite fisso alla sua dimensione (\emph{variable size} appunto) e gli elementi già presenti possono essere rimossi secondo una strategia adatta, proprio come una \emph{cache} generica. Questi algoritmi di gestione della \emph{cache} verranno riprese in lavori successivi.
-Formalmente, al tempo $t$ l'algoritmo riceve un nuovo dato $\Vec{x}_t$ con corrispettivo label $y_t$: si calcola $s_t = \sum_{i=1}^{m} \alpha_iy_iK(\Vec{x}_i, \Vec{x}_t)$ da cui si ricava la predizione $sign(s_t)$. 
-Per decidere se $\Vec{x}_t$ debba diventare un nuovo vettore di supporto, si testa la condizione $y_ts_t \leq \beta_t$: in caso positivo si aggiunge $\Vec{x}_t$ come vettore di supporto. La strategia per effettuare questa aggiunta dipende dall'algoritmo specifico. Per prima cosa, serve assegnare un valore ad $\alpha_t$. Si modifica poi il margine di separazione $\Vec{w}_{t+1} = \Vec{w}_t + \alpha_ty_t\Vec{x}_t$. L'ultimo passo opzionale consiste nello scalare la norma del nuovo margine $\Vec{w}_{t+1} \leftarrow c_t\Vec{w}_{t+1}$ per un certo $c_t > 0$. L'algoritmo perceptron nella forma originale usa come parametri $\beta_t=0, \alpha_t=1, c_t=1$. Per limitare il numero di vettori di supporto, una volta aggiunto $\Vec{x}_t$, si rimuovono tutti gli $\Vec{x}_i$ per cui $y_i(\Vec{w} - \alpha_iy_i\Vec{x}_i)\leq \beta$. Questo approccio non impone una dimensione fissa al numero di vettori di supporto e richiede di ricalcolare per ogni vettore di supporto la condizione di mantenimento ogni volta che si aggiunge un nuovo vettore di supporto. 
-Sempre in~\cite{2003_online_classification_on_a_budget}, si definisce un \emph{bound} teorico alla dimensione della cache.
+Un altro metodo per ridurre il numero di vettori di supporto è quello proposto in~\cite{1998_reducing_svm_complexity}. 
+Sempre in seguito all'addestramento di un modello, si rimuovono i vettori di supporto che contribuiscono a rendere la superficie di separazione troppo contorta, utilizzando un modello \emph{support vector regression machine} (SVRM) per approssimare la superficie di separazione originale.
+Per risolvere questo problema di regressione si suggerisce di utilizzare lo stesso kernel utilizzato per addestrare il modello di classificazione.
+L'approccio è simile al \emph{reduced set method} ma è meno vantaggioso nei casi in cui i moltiplicatori $\alpha$ siano strettamente nell'intervallo $[0,C]$, oppure in generale quando la superficie di separazione è particolarmente contorta nello spazio delle \emph{feature}.
 
+Si descrive in~\cite{2005_multistage_postprocessing} una riduzione in \emph{post-processing} più aggressiva, composta da quattro fasi. 
+Nella prima fase si addestra un classificatore sull'intero insieme di dati. 
+Nella seconda fase si rimuovono dai dati di addestramento tutti i vettori di supporto le cui proiezioni sulla superficie di separazione abbiano la curvatura maggiore. 
+Nella terza fase si un secondo classificatore utilizzando i dati di addestramento modificati nella fase precedente. 
+Nell'ultima fase si adotta l'approccio trovato in~\cite{1998_reducing_svm_complexity}, approssimando ulteriormente la superficie di separazione utilizzando un modello SVRM.
 
-Seguendo un approccio analogo, sono state proposte negli anni diverse varianti dell'algoritmo perceptron.
-\cite{2005_forgetron}~propone il \emph{forgetron}, una variante che utilizza una strategia di rimozione dei vettori di supporto. Per ogni iterazione, se il modella classifica erroneamente, si aggiornano i vettori di supporto in tre passaggi: si esegue l'algoritmo perceptron classico; si scalano i coefficienti dei vettori di supporto; si rimuove il vettore di supporto con il coefficiente più piccolo.
+In generale, questa classe di approcci è efficace nel migliorare l'efficienza dei modelli ma non migliora le tempistiche della fase di addestramento, dato che son richiesti molteplici passaggi in aggiunta ad un modello SVC classico, che già di per se è comunemente addestrato più volte per trovare i migliori iperparametri.
+
+\section{Riduzione con addestramento on-line}\label{sec:sparsesvm:on-line}
+I \emph{support vector classifier} possono essere usati anche per addestramento \emph{on-line}, scenario in cui i dati di addestramento sono forniti col passare del tempo. 
+Considerando che la quantità di dati d'addestramento non è nota a priori, risulta fondamentale inserire delle tecniche per contenere il numero di vettori di supporto, che tipicamente cresce linearmente rispetto al numero di dati di addestramento~\cite{2003_online_classification_on_a_budget}. 
+Questa problematica è chiamata in letteratura \emph{curse of kernelization}\cite{2012_bsgd}. 
+Per questo motivo esistono numerosi approcci per promuovere la parsimonia dei vettori di supporto dei modelli addestrati con approccio \emph{on-line}.
+
+Per tutti questi metodi si utilizza comunque il termine \emph{vettore di supporto} anche se in realtà non si tratta necessariamente di punti del \emph{dataset} di addestramento con coefficienti lagrangiani non nulli ma semplicemente di punti del \emph{dataset} (o punti fittizi) che contribuiscono alla definizione della superficie di separazione.
+
+L'algoritmo \emph{perceptron}~\cite{1958_perceptron} è un algoritmo di addestramento \emph{on-line} originariamente utilizzato per addestrare il modello omonimo (reti neurali con un solo neurone), ma che può essere usato per addestrare modelli \emph{support vector machine}.
+In~\cite{2003_online_classification_on_a_budget} si descrive una variante che mantiene un insieme di dimensione variabile dei vettori di supporto. 
+Viene battezzata \emph{variable size cache} perché non viene imposto un limite fisso alla sua dimensione (\emph{variable size} appunto) e gli elementi già presenti possono essere rimossi secondo una strategia adatta, proprio come una \emph{cache} generica. 
+Questi algoritmi di gestione della \emph{cache} vengono ripresi in lavori successivi, per esempio in~\cite{2012_bsgd} (poi utilizzato per effettuare esperimenti descritti nel~\cref{sec:comparazione_metodi}).
+Formalmente, per una generica variante di \emph{perceptron on-line}, al tempo $t$ l'algoritmo riceve un nuovo dato $\Vec{x}_t$ con la corrispettiva etichetta $y_t$: si calcola $s_t = \sum_{i<t} \alpha_iy_iK(\Vec{x}_i, \Vec{x}_t)$ da cui si ricava la predizione $\sign(s_t)$. 
+L'algoritmo \emph{perceptron} nella forma originale imposta come parametri $\beta_t=0, \alpha_t=1, c_t=1$. 
+Per decidere se $\Vec{x}_t$ debba essere selezionato come nuovo vettore di supporto si valuta la condizione $y_ts_t \leq \beta_t$.
+La strategia per effettuare questa aggiunta dipende dall'algoritmo specifico. 
+Per prima cosa, serve assegnare un valore ad $\alpha_t$ (che non necessariamente è fisso). 
+Si modifica poi la superficie di separazione $\Vec{w}_{t+1} = \Vec{w}_t + \alpha_ty_t\Vec{x}_t$. 
+L'ultimo passo (``opzionale'') consiste nello scalare il vettore $\Vec{w}_{t+1} \leftarrow c_t\Vec{w}_{t+1}$ per un certo $c_t > 0$. 
+
+Per limitare il numero di vettori di supporto, una volta aggiunto $\Vec{x}_t$, vengono rimossi tutti gli $\Vec{x}_i$ per cui $y_i(\Vec{w} - \alpha_iy_i\Vec{x}_i)\leq \beta_t$. 
+Questo approccio non impone una dimensione fissa alla \emph{cache} e richiede di ricalcolare per ogni vettore di supporto già presente, la condizione di mantenimento ad ogni nuova possibile aggiunta. 
+Sempre in~\cite{2003_online_classification_on_a_budget} viene definito un limite teorico alla dimensione della \emph{cache}: a parole, la dimensione della \emph{cache} è inversamente proporzionale al quadrato del miglior margine ottenibile sui dati visti fino a quel momento.
+
+Seguendo approcci analoghi sono state proposte negli anni diverse varianti dell'algoritmo \emph{perceptron}.
+
+In~\cite{2005_forgetron} si introduce il \emph{forgetron}, una variante che utilizza un altro criterio per la rimozione dei vettori di supporto. 
+Al tempo $t$, se $\Vec{x}_t$ viene classificato erroneamente, si aggiornano i vettori di supporto in tre passaggi: si esegue inizialmente l'algoritmo perceptron classico; si scalano in seguito i coefficienti dei vettori di supporto; si rimuovono infine i vettori di supporto con il coefficiente più piccolo.
+
+Si introduce in~\cite{2007_random_removal} il \emph{random perceptron}, una variante in cui la rimozione di un vettore di supporto viene effettuata casualmente.
+
+I metodi in~\cite{2003_online_classification_on_a_budget,2005_forgetron,2007_random_removal} usano la strategia di rimozione dei vettori di supporto ma con criteri diversi.
+
+Si introduce in~\cite{2008_projectron} il \emph{projectron}, una variante che utilizza una strategia di proiezione: un punto viene aggiunto come vettore di supporto se la sua proiezione sulla copertura lineare nello spazio delle \emph{feature} eccede un limite definito a priori. 
+%``The new vector is added to the support set if its projection onto the linear span of others in the feature space exceeds a predefined threshold, or otherwise its information is kept through the projection.''
 %
-\cite{2007_random_removal}~propone il \emph{random perceptron}, una variante in cui la rimozione di un vettore di supporto viene effettuata casualmente. 
-%
-\cite{2008_projectron}~propone il \emph{projectron}, una variante che utilizza una strategia di proiezione. 
-``The new vector is added to the support set if its
-projection onto the linear span of others in the feature space exceeds a predefined threshold,
-or otherwise its information is kept through the projection.'' **ok**
-%
 
-**merging strategy**
+In alternativa alle strategie di rimozione o proiezione, è possibile utilizzare una strategia di unione, dove coppie di vettori di supporto vengono approssimate da un singolo vettore di supporto.
+Questo approccio deriva dalla procedura descritta in~\cite{2005_merging_strategy}.
 
-%
+Si trovano poi in letteratura degli approcci diversi per addestramento \emph{on-line}, non basati sull'algoritmo \emph{perceptron}.
+
+In~\cite{2012_bsgd} si unisce il metodo di risoluzione del problema primale per SVM basato su discesa del gradiente~\cite{2007_chappelle_training_svm_primal, pegasos_solver} con le strategie di mantenimento dell'insieme di vettori di supporto rimozione, proiezione e unione viste in precedenza. 
+Il risultato è un algoritmo risolutivo efficiente, pensato principalmente per problemi \emph{on-line}, che fornisce la possibilità di esprimere a priori un numero massimo di vettori di supporto.
+
+In~\cite{2017_approximation_vm} si introduce il modello \emph{approximation vector machine}. 
+L'idea è quella di non considerare ogni punto di addestramento a se stante, ma raggruppare automaticamente  i dati in \emph{cluster}. 
+Ogni nuovo punto è approssimato da un ``centroide'' che si trova nello spazio delle \emph{feature} entro una distanza massima dal nuovo punto. 
+Una caratteristica aggiuntiva è quella di non richiedere a priori il numero di vettori di supporto massimo come iperparametro.
+La motivazione per questo approccio è che in un contesto \emph{on-line} non è possibile sapere a priori la dimensione totale del dataset e di conseguenza sarebbe molto difficile impostare un valore di \emph{budget} sensato. 
 
 
+\section{Riduzione con addestramento off-line}\label{sec:sparsesmv:off-line}
+Tutti gli approcci visti nel~\Cref{sec:sparsesvm:on-line} per addestramento \emph{on-line} possono essere adattati per un approccio \emph{off-line}, per esempio fornendo il set di addestramento come uno \emph{stream} artificiale di dati.
+Rimane comunque sensato sviluppare approcci dedicati per addestramento off-line, cercando di sfruttare la disponibilità dell'intero dataset come un vantaggio e non come una limitazione.
 
-\section{Riduzione con addestramento off-line}
-Tutti gli approcci visti in precedenza per addestramento on-line possono essere adattati per un approccio off-line, per esempio fornendo artificiosamente il set di addestramento come uno \emph{stream} di dati. Rimane comunque sensato sviluppare approcci dedicati per addestramento off-line, cercando di sfruttare la disponibilità dell'intero dataset come un vantaggio e non come una limitazione.
-
-Molti approcci per la riduzione del numero di vettori di supporto durante l'addestramento \emph{off-line} si basano sull'osservazione che i vettori di supporto erroneamente classificati, ovvero vettori di supporto con le rispettive variabili di \emph{slack} $>0$, influiscono negativamente sul valore della funzione obiettivo, oltre che richiedere spazio per essere memorizzati ed influire sul costo computazione di ogni inferenza. Un approccio per ridurre l'effetto degli \emph{outlier} è la formulazione del problema chiamata L2-svm \cref{eq:l2svc}. La funzione obiettivo è modificata in modo che le variabili di slack non compaiano come norma L1 ma compaiano invece come norma L2.
+Molti approcci per la riduzione del numero di vettori di supporto durante l'addestramento \emph{off-line} si basano sull'osservazione che i vettori di supporto corrispondenti a dati erroneamente etichettati, ovvero vettori di supporto con le rispettive variabili di scarto non nulle, influiscono negativamente sul valore della funzione obiettivo, oltre che richiedere spazio per essere memorizzati e influire sul costo computazionale di ogni predizione. 
+Un approccio per ridurre l'effetto degli \emph{outlier} è la formulazione del problema chiamata L2-SVC accennata nel~\Cref{sec:soft_margin_classifier}:
 \begin{equation}
 \label{eq:l2svc}
 \begin{aligned}
 & \min_{w,b}    && \frac{1}{2}\norm{\Vec{w}}^2 + \frac{C}{2}\sum_{i=0}^{m} \xi_i^2 \\
-& \textrm{s.t.} && y_i(\Vec{w}\cdot \Vec{x}_i + b) - 1 + \xi_i \geq 0 && i=1,\dots,m \\
-&               && \xi_i \geq 0  && i=1,\dots,m 
+& \textrm{s.t.} && y_i(\Vec{w}\cdot \Vec{x}_i + b) - 1 + \xi_i \geq 0, && i=1,\dots,m, \\
+&               && \xi_i \geq 0,  && i=1,\dots,m.
 \end{aligned}
 \end{equation}
-L'effetto è quello di penalizzare maggiormente la selezione di vettori di supporto con relative variabili di slack di valore $>1$.
-Si riportano di seguito alcuni approcci simili, in cui si modifica il termine della funzione obiettivo relativo alle variabili di slack.
+Le variabili di scarto compaiano nella funzione obiettivo elevate al quadrato: 
+la selezione di vettori di supporto con relative variabili di scarto $>1$ è penalizzata maggiormete rispetto alla formulazione L1-SVC classica.
+Si riportano in questo paragrafo alcuni approcci simili presenti in letteratura, approcci in cui si modifica il termine della funzione obiettivo relativo alle variabili di scarto.
 
-~\cite{2005_penalizing_outliers} propone una procedura di addestramento basata sull'osservazione che l'iperpiano di separazione tra le due classi viene reso inutilmente complicato a causa di \emph{outlier}. Per risolvere questi problemi, si riformula la funzione obiettivo del problema primale, introducendo una funzione di penalità non lineare sulle variabili di \emph{slack}, ottenendo il problema~\cref{eq:adaptively_penalizing_outliers}.
+Si trova in~\cite{2005_penalizing_outliers} una procedura di addestramento basata sull'osservazione che l'iperpiano di separazione tra le due classi viene reso inutilmente complicato a causa di \emph{outlier}. 
+Per limitarne l'effetto, si riformula la funzione obiettivo del problema primale vista nell'~\Cref{eq:svc:softmargin:primal_convenient}, introducendo una funzione di penalità non lineare sulle variabili di scarto. Il risultato è il problema
 \begin{equation}\label{eq:adaptively_penalizing_outliers}
 \begin{aligned}
 & \min_{\Vec{w}}    && \frac{1}{2}\norm{\Vec{w}}^2 +C \sum_{i=1}^{m}erf(\xi_i, \sigma) \\
-& \textrm{s.t.}     && y_i(\Vec{w}\cdot\Phi(\Vec{x}_i) + b) \geq 1 -\xi_i && i=1,\dots,m\\
-&                   && \xi_i \geq 0  && i=1,\dots,m 
+& \textrm{s.t.}     && y_i(\Vec{w}\cdot\Phi(\Vec{x}_i) + b) \geq 1 -\xi_i, && i=1,\dots,m,\\
+&                   && \xi_i \geq 0,  && i=1,\dots,m,
 \end{aligned}
 \end{equation}
-La funzione di penalità proposta è 
+dove la funzione di penalità $\mathrm{erf}$ è proposta come
 \[
-erf(\xi, \sigma) = \frac{2}{\sqrt{\pi}\sigma} \int_{0}^{\xi}e^{\frac{-z^2}{\sigma^2}} dz.
+\mathrm{erf}(\xi, \sigma) = \frac{2}{\sqrt{\pi}\sigma} \int_{0}^{\xi}e^{\frac{-z^2}{\sigma^2}} dz.
 \]
 %
-Il problema~\cref{eq:adaptively_penalizing_outliers} può comunque essere risolto considerando il duale, rendendo questo approccio relativamente facile da implementare e trattare con tecniche note.
+Il problema~\Cref{eq:adaptively_penalizing_outliers} si può comunque risolvere considerando la rispettiva formulazione duale, rendendo questo approccio relativamente facile da implementare e trattare con tecniche note, per esempio modificando \emph{sequential minimal optimization} (SMO)\cite{SMO}.
 
-% \cite{2001_ssvm_smooth_svm} propone di rimpiazzare la norma l1 delle variabili di \emph{slack} nella funzione obiettivo del problema primale \emph{soft-margin} con il quadrato della norma l2. Per rendere la funzione obiettivo doppiamente differenziabile (?) utilizza una smooth approximation function (?) così il problema può essere risolto con un fast newton method (?). 
+% \cite{2001_ssvm_smooth_svm} propone di rimpiazzare la norma l1 delle variabili di scarto nella funzione obiettivo del problema primale \emph{soft-margin} con il quadrato della norma l2. Per rendere la funzione obiettivo doppiamente differenziabile (?) utilizza una smooth approximation function (?) così il problema può essere risolto con un fast newton method (?). 
 
-\cite{2006_svm_on_a_budget}
+Si introduce in~\cite{2006_svm_on_a_budget} una formulazione in grado di minimizzare l'errore prodotto dai $B$ punti peggio classificati, con $B$ iperparametro fissato a priori. 
+In questa variante solo $B$ esempi con variabile di scarto non nulla influiscono sulla funzione obiettivo, mentre eventuali ulteriori esempi con variabile di scarto non nulla vengono ignorati.
+Si definisce un meta-algoritmo per derivare delle formulazioni concrete del problema SVC che utilizzano delle \emph{interpolation norm}\cite{norm_interpolation} in sostituzione alle classiche norme 1 e 2. 
+Il problema ottenuto applicando questa procedura alla formulazione L1-SVM è risolvibile con l'algoritmo \emph{SMO}\cite{SMO}.
 
+Esistono poi diversi approcci in letteratura che cercano di ridurre il numero di vettori di supporto in generale, senza concentrarsi in particolar modo sugli esempi con variabile di scarto non nulla.
 
+% Viene introdotto in~\cite{2001_relevance_vector_machine} il modelo \emph{relevant vector machine}, un approccio non limitato ai modelli SVM per produrre soluzioni sparse.
 
-\section{Feature selection durante addestramento}
+La risoluzione del problema SVC classica vista nel~\Cref{chap:SVC} richiede di calcolare la \emph{matrice kernel} di dimensione $m\times m$, definita come $K(X,X)$ dove $X$ è l'insieme dei dati di addestramento, $K$ è la funzione \emph{kernel} e $m=|X|$. 
+Ogni elemento in posizione $i,j$ è calcolato come $K(\Vec{x}_i, \Vec{x}_j)$. 
+Calcolare i valori di questa matrice è oneroso per un insieme di dati sufficientemente grande sia in termini di computazione che di memorizzazione. 
+In~\cite{2001_rsvm} si introduce il modello \emph{reduced support vector machine} (RSVM): l'idea alla base è quella di ridurre la dimensione della matrice \emph{kernel}, considerando invece una matrice $K(X,X^{'})$ dove $X^{'} \subset X$ con $|X^{'}| \ll m$. 
+La scelta degli elementi di $X^{'}$ è casuale. 
+Si trova in~\cite{2003_rsvm_comparison} un'analisi più pratica del modello RSVM, messo a confronto con l'implementazione dei modelli SVM classici più utilizzata, LibSVM\cite{libsvm}.
 
+Si propone in~\cite{2005_SLMC} il modello \emph{sparse large margin classifier} (SLMC). 
+Dopo aver fissato $N_z$ uguale al numero di vettori di supporto desiderato, vengono introdotte le variabili $\Vec{Z} = \{\Vec{z_i}\}, i=1,\dots,N_z$ con la stessa dimensionalità dei dati di addestramento originali e $\Vec{\beta} = \{\beta_i \in \mathbb{R}\}, i=1,\dots,N_z$.
+Viene così modificato il problema SVC \emph{soft margin} in~\Cref{eq:svc:softmargin:primal_convenient} aggiungendo un nuovo vincolo
+\begin{equation*}
+    \Vec{w} = \sum_{i=1}^{N_z} \Phi(\Vec{z}_i) \cdot \Vec{\beta}.
+\end{equation*}
+Le variabili $\Vec{z}_i$ e corrispettivi $\beta_i$ ricordano i ``vettori di supporto sintetici'' e corrispettivi moltiplicatori utilizzati nel \emph{reduced set method}, con la differenza che in questo caso sono introdotti direttamente come variabili nel problema di ottimizzazione originale, invece che essere calcolati in \emph{post-processing}.
+Questa nuova formulazione non è convessa e viene risolta nell'articolo originale con un metodo del gradiente.
 
+%**Building Support Vector Machines with Reduced Classifier Complexity** ma non ho capito cosa fa.
+
+In~\cite{2012_LLSVM} si introduce un metodo che utilizza una matrice \emph{kernel} approssimata, trattata come decomposizione in matrici di dimensioni molto ridotte, su cui verrà poi addestrato un modello lineare, composto da un numero ridotto di vettori di supporto (se confrontato con un modello addestrato sulla matrice \emph{kernel} completa).
+
+Si introduce in~\cite{2020_sparse_svm} l'approccio NSSVM, che propone un algoritmo basato su \emph{newton method} per risolvere il problema
+\begin{equation*}
+\begin{aligned}
+& \min_{\vec{w}, b}     && \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j) - \sum_{i=1}^{m}\alpha_i + \sum_{i=1}^{m} h_{cC}(\alpha_i)\\
+&\textrm{s.t.}          && \sum_{i=1}^{m}\alpha_iy_i=0, \\
+&                       && \norm{\Vec{\alpha}}_0 \leq B,
+\end{aligned}
+\end{equation*}
+dove $B$ è il numero massimo di vettori di supporto desiderato, $h_{cC}$ è una funzione di perdita definita come
+\begin{equation*}
+h_{cC}(t) = \begin{cases}
+            t^2/(2C) & \text{se} \quad t \geq 0, \\
+            t^2/(2c) & \text{se} \quad t < 0, \\
+            \end{cases}
+\end{equation*}
+e $\norm{\Vec{\alpha}}_0$ è la norma 0 di $\Vec{\alpha}$, ovvero il numero di moltiplicatori $\alpha_i$ non nulli.
+Questo metodo consente di impostare esplicitamente un limite al numero di vettori di supporto; 
+l'implementazione fornita dall'autore verrà confrontata nel~\Cref{sec:comparazione_metodi} con il metodo originale proposto in~\Cref{sec:our_budgeted_svm}.
+
+\section{Feature selection durante addestramento}\label{sec:sparsesvm:feature-selection}
+\emph{Feature selection} è il nome utilizzato per descrivere il processo di riduzione delle variabili considerate in \emph{input} da un modello di apprendimento automatico.
+Ridurre il numero di \emph{feature} è spesso utilie per contrastare la \emph{dimensionality curse}~\cite{elements-of-statistical-learning}.
+
+In~\cite{2014_MIP_feature_selection} si descrivono due formulazioni di SVC  con variabili intere per eseguire \emph{feature selection} durante la fase di addestramento.
+La prima formulazione modifica il modello L1-SVC (visto in~\Cref{eq:svc:softmargin:primal}) in 
+\begin{equation*}
+\begin{aligned}
+& \min_{\Vec{w}, \Vec{v}, b, \Vec{\xi}}    && \sum_{i=1}^{m} \xi_i \\
+& \textrm{s.t.} && y_i(\Vec{w}\cdot \Vec{x}_i + b) - 1 + \xi_i \geq 0,   && i=1,\dots,m, \\
+&               && l_jv_j \leq w_j \leq u_jv_j,                          && j=1,\dots,d, \\
+&               && \sum_{j=1}^{d} c_jv_j \leq B,                                        \\
+&               && \xi_i \geq 0,                                         && i=1,\dots,m, \\
+&               && v_i \in \{0,1\},                                      && i=1,\dots,m, 
+\end{aligned}
+\end{equation*}
+dove l'iperparametro $B$ limita il numero di \emph{feature} utilizzabili dal modello.
+Ogni componente $w_j$ del vettore $\Vec{w}$, se selezionata, è forzata tra un intervallo $[l_j,u_j]$: la scelta di questi valori impatta sui tempi di risoluzione del modello.
+La seconda formulazione descritta è invece
+\begin{equation*}
+\begin{aligned}
+& \min_{\Vec{w}, \Vec{v}, b, \Vec{\xi}}    && -r + C\sum_{i=1}^{m} \xi_i \\
+& \textrm{s.t.} && y_i(\Vec{w}\cdot \Vec{x}_i + b) - 1 + \xi_i \geq 0,   && i=1,\dots,m, \\
+&               && v_j \leq w_j \leq v_j,                                && j=1,\dots,d, \\
+&               && \sum_{j=1}^{d} c_jv_j \leq B,                                        \\
+&               && \xi_i \geq 0,                                         && i=1,\dots,m, \\
+&               && v_i \in \{0,1\},                                      && i=1,\dots,m, \\
+&               && r_{lo} \leq r \leq r_{up}, \\
+\end{aligned}
+\end{equation*}
+che modifica la precedente rimuovendo i limiti $l_j,u_j$ ed introducendo la variabile $r$ con un nuovo vincolo per costringerne il valore in un intervallo $[r_{lo}, r_{up}]$.
+
+La formulazione proposta in questa tesi, esposta nel~\Cref{sec:our_budgeted_svm}, utilizza in modo simile delle variabili binarie per limitare direttamente il numero di vettori di supporto invece che il numero di \emph{feature}.
+
+In~\cite{2017_lagrangian_feature_selection} si trova un approccio molto simile a quello in~\cite{2014_MIP_feature_selection}, con la differenza che la selezione delle \emph{feature} non è ottenuta tramite un budget esplicito incluso come vincolo, ma tramite l'aggiunta di un termine di penalità nella funzione obiettivo, analogo alla penalità assegnata dalle variabili di scarto della formulazione \emph{soft margin classica}.
+Questo termine di penalizzazione è $ D\sum_{j=1}^{d}v_j$ dove $v_j$ è una variabile binaria associata alla selezione dell'i-esima \emph{feature} e $D$ è un iperparametro per bilanciare l'impatto della penalizzazione. 
+Il problema ottenuto è risolto considerando una formulazione duale lagrangiana e risolto tramite un metodo di ascesa del gradiente. 
+
+In~\cite{2019_robust_classification} si introduce un approccio generico per modificare alcuni modelli noti (tra cui SVM) rendendoli ``robusti''.
+Si distingue tra robustezza rispetto alle \emph{feature}, che rende il modello capace di tollerare valori erronei in alcune componenti dei dati $\Vec{x}_i$, e robustezza rispetto al rumore, che rende il modello capace di tollerare errori nelle etichette $y_i$.
+Per questi due casi si propongono delle formulazioni distinte, risolvibili con metodi diversi.
+
+In~\cite{2022_MILP_noise_relabeling} si introducono due formulazioni che includono nella procedura di addestramento un meccanismo per identificare ed in caso correggere l'etichetta di dati erroneamente etichettati.
+La prima formulazione consente di correggere liberamente etichette per minimizzare errori di classificazione, mentre la seconda formulazione integra nell'addestramento una procedura di \emph{clustering} per correggere le etichette identificate come errate.
+
+I metodi descritti in questo paragrafo non riducono esplicitamente il numero di vettori di supporto, ma tramite la riduzione delle \emph{feature} selezionate o tramite meccanismi per trattare dataset rumorosi, producono in ogni modo dei modelli SVM più efficienti.
+In aggiunta, alcuni di questi metodi utilizzano (almeno per la fase sperimentale) delle formulazioni con variabili intere, caratteristica in comune con il metodo proposto in questa tesi descritto nel~\Cref{sec:our_budgeted_svm}, contribuendo a dimostrare la fattibilità di approcci basati su questo tipo di formulazioni.
 
 \section{Budgeted SVC}\label{sec:our_budgeted_svm}
-Per limitare il numero di vettori di supporto, si introducono $m$ variabili continue che si comportano però come variabili binarie. Ogni $\Vec{x}_i$ avrà associata una $\gamma_i$ che avrà un valore $\approx1$ se $\Vec{x}_i$ è scelto come vettore di supporto; avrà un valore $\approx0$ in caso contrario.
-La prima proposta di riformulazione del problema duale è
+Questo paragrafo descrive la modellazione proposta in questa tesi per produrre modelli SVC parsimoniosi.
+L'idea è quella di modificare la formulazione duale \emph{soft margin} vista in~\Cref{eq:svc:softmargin:wolfe_dual_plus_kernel_trick} introducendo variabili e vincoli adatti per forzare un limite superiore al numero di vettori di supporto.
+
+Una primo tentativo prevede l'introduzione di $m$ variabili continue $\gamma_i,\quad i=1,\dots,m$, ognuna associata ad un dato $\Vec{x}_i$, con dei rispettivi vincoli per forzare ogni $\gamma_i\approx1$ se $\Vec{x}_i$ è scelto come vettore di supporto, oppure per forzare $\gamma_i\approx0$ in caso contrario.
+La formulazione proposta è 
 \begin{equation}\label{eq:budget_svc:continuous_gamma_formulation}
 \begin{aligned}
 & \max_{\alpha}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j) +P(\gamma_1, \dots, \gamma_m)\\
-& \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0                   \\
-&               && 0 \leq \alpha_i \leq \gamma_iC   && i=1,\dots,m  \\
-&               && 0 \leq \gamma_i \leq 1           && i=1, \dots, m\\
-&               && \sum_{i=1}^{m} \gamma_i \leq B.                   \\
+& \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0,                   \\
+&               && 0 \leq \alpha_i \leq \gamma_iC,   && i=1,\dots,m,  \\
+&               && 0 \leq \gamma_i \leq 1,           && i=1, \dots,m,\\
+&               && \sum_{i=1}^{m} \gamma_i \leq B,                   \\
 \end{aligned}
 \end{equation}
-La funzione $P$ deve essere scelta in modo da forzare le variabili $\gamma_i$ vicino a $0$ o $1$, simulando una variabile binaria.
-Una possibile $P$ potrebbe essere 
-$$P(\gamma_1, \dots, \gamma_n) = \prod_i -\gamma_i (1 - \gamma_i)$$
+dove la funzione $P$ è scelta in modo da forzare (per una soluzione ottima) le variabili $\gamma_i$ vicino a $0$ o $1$, simulando una variabile binaria.
+Una possibile scelta per $P$ potrebbe essere 
+$$P(\gamma_1, \dots, \gamma_n) = \prod_i -\gamma_i (1 - \gamma_i),$$
 oppure 
 $$P(\gamma_1, \dots, \gamma_n) = \prod_i \left( \gamma_i^{\gamma_i} (1 - \gamma_i)^{1 - \gamma_i} - 1 \right).$$
 %
 %
-L'utilizzo di variabili $\gamma_i$ continue, consentirebbe l'utilizzo di risolutori basati sul metodo della discesa del gradiente, il che sarebbe vantaggioso a livello pratico sia per le buone performance sia per la facilità di implementazione. (?)
-Per semplicità, i primi esperimenti sono eseguiti su una formulazione leggermente diversa che definisce le variabili $\gamma_i$ come variabili booleane
+L'utilizzo di variabili $\gamma_i$ continue, consentirebbe l'utilizzo di risolutori basati sul metodo della discesa del gradiente, il che sarebbe vantaggioso a livello pratico sia per le buone performance sia per la facilità di implementazione. 
+Tuttavia, l'introduzione della funzione $P$ rende il problema non quadratico: dopo alcuni esperimenti preliminari, notando anche l'instabilità del metodo, si accantona questa formulazione.
+
+Viene proposta quindi una formulazione leggermente diversa che definisce le variabili $\gamma_i$ come variabili booleane:
 \begin{equation}\label{eq:budget_svc:binary_gamma_formulation}
 \begin{aligned}
 & \max_{\alpha}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j)\\
-& \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0                   \\
-&               && 0 \leq \alpha_i \leq \gamma_iC   && i=1,\dots,m  \\
-&               && \sum_{i=1}^{m} \gamma_i \leq B                   \\
+& \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0,                   \\
+&               && 0 \leq \alpha_i \leq \gamma_iC,   && i=1,\dots,m,  \\
+&               && \sum_{i=1}^{m} \gamma_i \leq B,                  \\
 &               && \gamma_i \in \{0,1\}.                            \\
 \end{aligned}
 \end{equation}
 Questa scelta forza nella pratica ad utilizzare un risolutore in grado di trattare problemi con variabili intere.
-
+L'utilizzo di un risolutore generico molto performante, come Gurobi~\cite{gurobi}, rende la risoluzione del problema~\Cref{eq:budget_svc:binary_gamma_formulation} fattibile in tempi ragionevoli, come riscontrato negli esperimenti descritti nel prossimo capitolo.

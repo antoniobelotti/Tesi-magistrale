@@ -9,7 +9,9 @@
 \def\myCDL{Corso di Laurea magistrale in Informatica}
 
 % TITOLO TESI:
-\def\myTitle{Algoritmi di classificazione basati su vettori di supporto per la produzione di modelli succinti}
+\def\myTitle{
+Algoritmi di classificazione basati su vettori di supporto per la produzione di modelli succinti
+}
 
 % AUTORE:
 \def\myName{Antonio Belotti}
@@ -18,7 +20,7 @@
 % RELATORE E CORRELATORE:
 \def\myRefereeA{Prof. Dario Malchiodi}
 \def\myRefereeB{Prof. Alberto Ceselli}
-\def\myRefereeC{Prof. Michele Barbato}
+\def\myRefereeC{Dr. Michele Barbato}
 
 % ANNO ACCADEMICO
 \def\myYY{2022-2023}
@@ -33,11 +35,12 @@
 \usepackage[a4paper]{geometry}		% Formato del foglio
 \usepackage[italian]{babel}			% Supporto per l'italiano
 \usepackage[utf8]{inputenc}			% Supporto per UTF-8
-\usepackage[a-1b]{pdfx}			% File conforme allo standard PDF-A (obbligatorio per la consegna)
+\usepackage[a-1b]{pdfx}             % File conforme allo standard PDF-A (obbligatorio per la consegna)
 
 % Package per la grafica
 \usepackage{graphicx}				% Funzioni avanzate per le immagini
-\usepackage{hologo}					% Bibtex logo with \hologo{BibTeX}
+\usepackage{subcaption}
+%\usepackage{hologo}				% Bibtex logo with \hologo{BibTeX}
 %\usepackage{epsfig}				% Permette immagini in EPS
 %\usepackage{xcolor}				% Gestione avanzata dei colori
 
@@ -45,7 +48,6 @@
 % Package tipografici
 \usepackage{amssymb,amsmath,amsthm} % Simboli matematici
 %\usepackage{listings}				% Scrittura di codice
-
 % Package ipertesto
 \usepackage{url}					% Visualizza e rendere interattii gli URL
 \usepackage[pdfa]{hyperref}		    % Rende interattivi i collegamenti interni
@@ -53,12 +55,24 @@
 \usepackage[italiano,ruled, lined, linesnumbered, longend]{algorithm2e}            % pseudocodice
 \DontPrintSemicolon
 
+\usepackage{booktabs}               % \toprule, \midrule nelle tabelle
+\usepackage{hhline}
+\usepackage{multirow}
+\usepackage{colortbl}
+
 \usepackage[short]{optidef}         % Problemi di ottimizzazione
 \usepackage{etoolbox}
 \robustify{\label}
 
 \usepackage[italian]{cleveref}  % aggiunge automaticamente anche "capitolo" o "eq." in base a cosa ci si sta riferendo
+\crefname{section}{Paragrafo}{Paragrafi}
+\Crefname{section}{Paragrafo}{Paragrafi}
+\crefname{paragraph}{Capoverso}{Capoversi}
+\Crefname{paragraph}{Capoverso}{Capoversi}
+\crefname{equation}{Equazione}{Equazioni}
+\Crefname{equation}{Equazione}{Equazioni}
 
+\usepackage{setspace}  
 
 % 
 % norma di un vettore
@@ -68,7 +82,21 @@
 \newcommand{\pd}[2]{\frac{\partial{#1}}{\partial{#2}}}
 
 % Vec in grassetto invece che con freccia
-\renewcommand\vec{\mathbf}
+\usepackage{ifthen}
+\renewcommand{\vec}[1]{%
+  \ifthenelse{
+    \equal{#1}{\alpha} 
+    \OR \equal{#1}{\xi}
+    \OR \equal{#1}{\mu}
+    \OR \equal{#1}{\beta}
+    } % se serve per altri simboli \OR \equal{#1}{\beta}}%
+  {\boldsymbol{#1}}%
+  {\mathbf{#1}}%
+}
+%\renewcommand\vec{\mathbf}
+
+%
+\newcommand{\sign}{\mathrm{sign}}
 
 
 \makeindex

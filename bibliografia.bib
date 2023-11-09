@@ -65,20 +65,23 @@
   year={2008}
 }
 
-
-@article{SMO,
-  title={Sequential minimal optimization: A fast algorithm for training support vector machines},
-  author={Platt, John},
-  year={1998}
+@techreport{SMO,
+    author = {Platt, John},
+    title = {Sequential Minimal Optimization: A Fast Algorithm for Training Support Vector Machines},
+    institution = {Microsoft},
+    year = {1998},
+    month = {April},
+    abstract = {This paper proposes a new algorithm for training support vector machines: Sequential Minimal Optimization, or SMO. Training a support vector machine requires the solution of a very large quadratic programming (QP) optimization problem. SMO breaks this large QP problem into a series of smallest possible QP problems. These small QP problems are solved analytically, which avoids using a time-consuming numerical QP optimization as an inner loop. The amount of memory required for SMO is linear in the training set size, which allows SMO to handle very large training sets. Because matrix computation is avoided, SMO scales somewhere between linear and quadratic in the training set size for various test problems, while the standard chunking SVM algorithm scales somewhere between linear and cubic in the training set size. SMO's computation time is dominated by SVM evaluation, hence SMO is fastest for linear SVMs and sparse data sets. On real-world sparse data sets, SMO can be more than 1000 times faster than the chunking algorithm.},
+    url = {https://www.microsoft.com/en-us/research/publication/sequential-minimal-optimization-a-fast-algorithm-for-training-support-vector-machines/},
+    number = {MSR-TR-98-14},
 }
 
-
-@article{reduced_set_method,
-    author = {Burges, Christopher},
-    year = {1997},
-    month = {07},
-    pages = {},
-    title = {Simplified Support Vector Decision Rules}
+@inproceedings{reduced_set_method,
+  title={Simplified Support Vector Decision Rules},
+  author={Christopher J. C. Burges},
+  booktitle={International Conference on Machine Learning},
+  year={1996},
+  url={https://api.semanticscholar.org/CorpusID:52810328}
 }
 
 @inproceedings{burges_improving_accuracy,
@@ -92,6 +95,15 @@
     volume = {9},
     year = {1996}
 }
+
+@inproceedings{1998_reducing_svm_complexity,
+  title={Reducing the run-time complexity of support vector machines},
+  author={Osuna, Edgar and Girosi, Federico},
+  booktitle={International Conference on Pattern Recognition (submitted)},
+  year={1998},
+  organization={Citeseer}
+}
+
 
 @inproceedings{2003_online_classification_on_a_budget,
  author = {Crammer, Koby and Kandola, Jaz and Singer, Yoram},
@@ -117,6 +129,38 @@
   url={https://api.semanticscholar.org/CorpusID:12781225}
 }
 
+@article{2001_ssvm_smooth_svm,
+    author = {Lee, Yuh-Jye and Mangasarian, O.},
+    year = {2001},
+    month = {01},
+    pages = {5-22},
+    title = {SSVM: A Smooth Support Vector Machine for Classification},
+    volume = {20},
+    journal = {Computational Optimization and Applications},
+    doi = {10.1023/A:1011215321374}
+}
+
+@inproceedings{2001_rsvm,
+  title={RSVM: Reduced Support Vector Machines},
+  author={Yuh-Jye Lee and Olvi L. Mangasarian},
+  booktitle={SDM},
+  year={2001},
+  url={https://api.semanticscholar.org/CorpusID:14152802}
+}
+
+@article{2003_rsvm_comparison,
+  author={Kuan-Ming Lin and Chih-Jen Lin},
+  journal={IEEE Transactions on Neural Networks}, 
+  title={A study on reduced support vector machines}, 
+  year={2003},
+  volume={14},
+  number={6},
+  pages={1449-1459},
+  doi={10.1109/TNN.2003.820828}
+}
+
+
+
 @inproceedings{2005_forgetron,
  author = {Dekel, Ofer and Shalev-shwartz, Shai and Singer, Yoram},
  booktitle = {Advances in Neural Information Processing Systems},
@@ -127,6 +171,42 @@
  url = {https://proceedings.neurips.cc/paper_files/paper/2005/file/c0f971d8cd24364f2029fcb9ac7b71f5-Paper.pdf},
  volume = {18},
  year = {2005}
+}
+
+@inproceedings{2005_penalizing_outliers,
+  title={Increasing efficiency of SVM by adaptively penalizing outliers},
+  author={Zhan, Yiqiang and Shen, Dinggang},
+  booktitle={International Workshop on Energy Minimization Methods in Computer Vision and Pattern Recognition},
+  pages={539--551},
+  year={2005},
+  organization={Springer}
+}
+
+@article{2005_multistage_postprocessing,
+    title = {Design efficient support vector machine for fast classification},
+    journal = {Pattern Recognition},
+    volume = {38},
+    number = {1},
+    pages = {157-161},
+    year = {2005},
+    issn = {0031-3203},
+    doi = {https://doi.org/10.1016/j.patcog.2004.06.001},
+    url = {https://www.sciencedirect.com/science/article/pii/S0031320304002195},
+    author = {Yiqiang Zhan and Dinggang Shen},
+    keywords = {Support vector machine, Training method, Computational efficiency},
+    abstract = {This paper presents a four-step training method for increasing the efficiency of support vector machine (SVM). First, a SVM is initially trained by all the training samples, thereby producing a number of support vectors. Second, the support vectors, which make the hypersurface highly convoluted, are excluded from the training set. Third, the SVM is re-trained only by the remaining samples in the training set. Finally, the complexity of the trained SVM is further reduced by approximating the separation hypersurface with a subset of the support vectors. Compared to the initially trained SVM by all samples, the efficiency of the finally-trained SVM is highly improved, without system degradation.}
+}
+
+@inproceedings{2006_svm_on_a_budget,
+ author = {Dekel, Ofer and Singer, Yoram},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {B. Sch\"{o}lkopf and J. Platt and T. Hoffman},
+ pages = {},
+ publisher = {MIT Press},
+ title = {Support Vector Machines on a Budget},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2006/file/a081cab429ff7a3b96e0a07319f1049e-Paper.pdf},
+ volume = {19},
+ year = {2006}
 }
 
 @article{2007_random_removal,
@@ -140,34 +220,275 @@
   publisher={Kluwer}
 }
 
-@inproceedings{2005_penalizing_outliers,
-  title={Increasing efficiency of SVM by adaptively penalizing outliers},
-  author={Zhan, Yiqiang and Shen, Dinggang},
-  booktitle={International Workshop on Energy Minimization Methods in Computer Vision and Pattern Recognition},
-  pages={539--551},
-  year={2005},
-  organization={Springer}
+@article{2012_bsgd,
+  author  = {Zhuang Wang and Koby Crammer and Slobodan Vucetic},
+  title   = {Breaking the Curse of Kernelization: Budgeted Stochastic Gradient Descent for Large-Scale SVM Training},
+  journal = {Journal of Machine Learning Research},
+  year    = {2012},
+  volume  = {13},
+  number  = {100},
+  pages   = {3103--3131},
+  url     = {http://jmlr.org/papers/v13/wang12b.html}
 }
 
-@article{2001_ssvm_smooth_svm,
-author = {Lee, Yuh-Jye and Mangasarian, O.},
-year = {2001},
-month = {01},
-pages = {5-22},
-title = {SSVM: A Smooth Support Vector Machine for Classification},
-volume = {20},
-journal = {Computational Optimization and Applications},
-doi = {10.1023/A:1011215321374}
+@article{2017_approximation_vm,
+  author  = {Trung Le and Tu Dinh Nguyen and Vu Nguyen and Dinh Phung},
+  title   = {Approximation Vector Machines for Large-scale Online Learning},
+  journal = {Journal of Machine Learning Research},
+  year    = {2017},
+  volume  = {18},
+  number  = {111},
+  pages   = {1--55},
+  url     = {http://jmlr.org/papers/v18/16-191.html}
 }
 
-@inproceedings{2006_svm_on_a_budget,
- author = {Dekel, Ofer and Singer, Yoram},
+
+
+@misc{UCI_ML_repository,
+  author = {Dua, Dheeru and Graff, Casey},
+  year = {2017},
+  title = {UCI Machine Learning Repository},
+  url = {http://archive.ics.uci.edu/ml},
+  institution = {University of California, Irvine, School of Information and Computer Sciences}
+}
+
+@article{libsvm,
+ author = {Chang, Chih-Chung and Lin, Chih-Jen},
+ title = {{LIBSVM}: A library for support vector machines},
+ journal = {ACM Transactions on Intelligent Systems and Technology},
+ volume = {2},
+ issue = {3},
+ year = {2011},
+ pages = {27:1--27:27},
+ note =	 {Software available at \url{http://www.csie.ntu.edu.tw/~cjlin/libsvm}}
+}
+
+@inproceedings{2005_SLMC,
+    author = {Wu, Mingrui and Schölkopf, Bernhard and Bakir, Gökhan},
+    year = {2005},
+    month = {01},
+    pages = {996-1003},
+    title = {Building Sparse Large Margin Classifiers},
+    journal = {Proceedings of the 22nd International Conference on Machine Learning, 1001-1008 (2005)},
+    doi = {10.1145/1102351.1102477}
+}
+
+@article{2001_relevance_vector_machine,
+    author = {Tipping, Michael},
+    year = {2001},
+    month = {01},
+    pages = {211-244},
+    title = {Sparse Bayesian Learning and Relevance Vector Machine},
+    volume = {1},
+    journal = {J. Mach. Learn. Res.},
+    doi = {10.1162/15324430152748236}
+}
+
+@misc{gurobi,
+  author = {{Gurobi Optimization, LLC}},
+  title = {{Gurobi Optimizer Reference Manual}},
+  year = 2023,
+  url = "https://www.gurobi.com"
+}
+
+@article{ds_complexity,
+  title={How complex is your classification problem},
+  author={Lorena, A and Garcia, L and Lehmann, Jens and Souto, M and Ho, T},
+  journal={A survey on measuring classification complexity. arXiv},
+  year={2018}
+}
+
+@article{problexity,
+  title={problexity—An open-source Python library for supervised learning problem complexity assessment},
+  author={Komorniczak, Joanna and Ksieniewicz, Pawe{\l}},
+  journal={Neurocomputing},
+  volume={521},
+  pages={126--136},
+  year={2023},
+  publisher={Elsevier}
+}
+
+@inproceedings{kernel_PCA,
+  title={Kernel Principal Component Analysis},
+  author={Bernhard Scholkopf and Alex Smola and Klaus-Robert M{\"u}ller},
+  booktitle={International Conference on Artificial Neural Networks},
+  year={1997},
+  url={https://api.semanticscholar.org/CorpusID:7831590}
+}
+
+@inproceedings{kernel_perceptron,
+ author = {Guyon, I. and Boser, B. and Vapnik, V.},
  booktitle = {Advances in Neural Information Processing Systems},
- editor = {B. Sch\"{o}lkopf and J. Platt and T. Hoffman},
+ editor = {S. Hanson and J. Cowan and C. Giles},
  pages = {},
- publisher = {MIT Press},
- title = {Support Vector Machines on a Budget},
- url = {https://proceedings.neurips.cc/paper_files/paper/2006/file/a081cab429ff7a3b96e0a07319f1049e-Paper.pdf},
- volume = {19},
- year = {2006}
+ publisher = {Morgan-Kaufmann},
+ title = {Automatic Capacity Tuning of Very Large VC-Dimension Classifiers},
+ url = {https://proceedings.neurips.cc/paper_files/paper/1992/file/eaae339c4d89fc102edd9dbdb6a28915-Paper.pdf},
+ volume = {5},
+ year = {1992}
+}
+
+@inproceedings{norm_interpolation,
+  title={Interpolation of operators},
+  author={Colin Bennett and Robert C. Sharpley},
+  year={1987},
+  url={https://api.semanticscholar.org/CorpusID:118898907}
+}
+
+@ARTICLE{2020_sparse_svm,
+  author={Zhou, Shenglong},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
+  title={Sparse SVM for Sufficient Data Reduction}, 
+  year={2022},
+  volume={44},
+  number={9},
+  pages={5560-5571},
+  doi={10.1109/TPAMI.2021.3075339}}
+
+@inproceedings{2005_merging_strategy,
+    author = {Nguyen, DucDung and Ho, TuBao},
+    title = {An Efficient Method for Simplifying Support Vector Machines},
+    year = {2005},
+    isbn = {1595931805},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/1102351.1102429},
+    doi = {10.1145/1102351.1102429},
+    abstract = {In this paper we describe a new method to reduce the complexity of support vector machines by reducing the number of necessary support vectors included in their solutions. The reduction process iteratively selects two nearest support vectors belonging to the same class and replaces them by a newly constructed vector. Through the analysis of relation between vectors in the input and feature spaces, we present the construction of new vectors that requires to find the unique maximum point of a one-variable function on the interval (0, 1), not to minimize a function of many variables with local minimums in former reduced set methods. Experimental results on real life datasets show that the proposed method is effective in reducing number of support vectors and preserving machine's generalization performance.},
+    booktitle = {Proceedings of the 22nd International Conference on Machine Learning},
+    pages = {617–624},
+    numpages = {8},
+    location = {Bonn, Germany},
+    series = {ICML '05}
+}
+
+@article{2007_chappelle_training_svm_primal,
+  title={Training a Support Vector Machine in the Primal},
+  author={Olivier Chapelle},
+  journal={Neural Computation},
+  year={2007},
+  volume={19},
+  pages={1155-1178},
+  url={https://api.semanticscholar.org/CorpusID:12601634}
+}
+
+@Article{pegasos_solver,
+    author={Shalev-Shwartz, Shai
+    and Singer, Yoram
+    and Srebro, Nathan
+    and Cotter, Andrew},
+    title={Pegasos: primal estimated sub-gradient solver for SVM},
+    journal={Mathematical Programming},
+    year={2011},
+    month={Mar},
+    day={01},
+    volume={127},
+    number={1},
+    pages={3-30},
+    abstract={We describe and analyze a simple and effective stochastic sub-gradient descent algorithm for solving the optimization problem cast by Support Vector Machines (SVM). We prove that the number of iterations required to obtain a solution of accuracy {\$}{\$}{\{}{\backslash}epsilon{\}}{\$}{\$}is {\$}{\$}{\{}{\backslash}tilde{\{}O{\}}(1 / {\backslash}epsilon){\}}{\$}{\$}, where each iteration operates on a single training example. In contrast, previous analyses of stochastic gradient descent methods for SVMs require {\$}{\$}{\{}{\backslash}Omega(1 / {\backslash}epsilon^2){\}}{\$}{\$}iterations. As in previously devised SVM solvers, the number of iterations also scales linearly with 1/$\lambda$, where $\lambda$ is the regularization parameter of SVM. For a linear kernel, the total run-time of our method is {\$}{\$}{\{}{\backslash}tilde{\{}O{\}}(d/({\backslash}lambda {\backslash}epsilon)){\}}{\$}{\$}, where d is a bound on the number of non-zero features in each example. Since the run-time does not depend directly on the size of the training set, the resulting algorithm is especially suited for learning from large datasets. Our approach also extends to non-linear kernels while working solely on the primal objective function, though in this case the runtime does depend linearly on the training set size. Our algorithm is particularly well suited for large text classification problems, where we demonstrate an order-of-magnitude speedup over previous SVM learning methods.},
+    issn={1436-4646},
+    doi={10.1007/s10107-010-0420-4},
+    url={https://doi.org/10.1007/s10107-010-0420-4}
+}
+
+@ARTICLE{2012_LLSVM,
+  author={Lan, Liang and Wang, Zhuang and Zhe, Shandian and Cheng, Wei and Wang, Jun and Zhang, Kai},
+  journal={IEEE Transactions on Neural Networks and Learning Systems}, 
+  title={Scaling Up Kernel SVM on Limited Resources: A Low-Rank Linearization Approach}, 
+  year={2019},
+  volume={30},
+  number={2},
+  pages={369-378},
+  doi={10.1109/TNNLS.2018.2838140}
+}
+
+@Article{svm_tutorial,
+    author={Burges, Christopher J.C.},
+    title={A Tutorial on Support Vector Machines for Pattern Recognition},
+    journal={Data Mining and Knowledge Discovery},
+    year={1998},
+    month={Jun},
+    day={01},
+    volume={2},
+    number={2},
+    pages={121-167},
+    abstract={The tutorial starts with an overview of the concepts of VC dimension and structural risk minimization. We then describe linear Support Vector Machines (SVMs) for separable and non-separable data, working through a non-trivial example in detail. We describe a mechanical analogy, and discuss when SVM solutions are unique and when they are global. We describe how support vector training can be practically implemented, and discuss in detail the kernel mapping technique which is used to construct SVM solutions which are nonlinear in the data. We show how Support Vector machines can have very large (even infinite) VC dimension by computing the VC dimension for homogeneous polynomial and Gaussian radial basis function kernels. While very high VC dimension would normally bode ill for generalization performance, and while at present there exists no theory which shows that good generalization performance is guaranteed for SVMs, there are several arguments which support the observed high accuracy of SVMs, which we review. Results of some experiments which were inspired by these arguments are also presented. We give numerous examples and proofs of most of the key theorems. There is new material, and I hope that the reader will find that even old material is cast in a fresh light.},
+    issn={1573-756X},
+    doi={10.1023/A:1009715923555},
+    url={https://doi.org/10.1023/A:1009715923555}
+}
+
+@book{optimization_book,
+  title={Practical methods of optimization},
+  author={Fletcher, Roger},
+  year={2000},
+  publisher={John Wiley \& Sons}
+}
+
+
+@inproceedings{representer_theorem,
+  title={A Generalized Representer Theorem},
+  author={Bernhard Scholkopf and Ralf Herbrich and Alex Smola},
+  booktitle={COLT/EuroCOLT},
+  year={2001},
+  url={https://api.semanticscholar.org/CorpusID:9256459}
+}
+
+@article{2019_robust_classification,
+  title={Robust classification},
+  author={Bertsimas, Dimitris and Dunn, Jack and Pawlowski, Colin and Zhuo, Ying Daisy},
+  journal={INFORMS Journal on Optimization},
+  volume={1},
+  number={1},
+  pages={2--34},
+  year={2019},
+  publisher={INFORMS}
+}
+
+@article{2014_MIP_feature_selection,
+  title={Feature selection for support vector machines via mixed integer linear programming},
+  author={Maldonado, Sebasti{\'a}n and P{\'e}rez, Juan and Weber, Richard and Labb{\'e}, Martine},
+  journal={Information sciences},
+  volume={279},
+  pages={163--175},
+  year={2014},
+  publisher={Elsevier}
+}
+
+@article{2017_lagrangian_feature_selection,
+  title={Lagrangian relaxation for SVM feature selection},
+  author={Gaudioso, Manlio and Gorgone, Enrico and Labb{\'e}, Martine and Rodr{\'\i}guez-Ch{\'\i}a, Antonio M},
+  journal={Computers \& Operations Research},
+  volume={87},
+  pages={137--145},
+  year={2017},
+  publisher={Elsevier}
+}
+
+@article{2022_MILP_noise_relabeling,
+  title={A mathematical programming approach to SVM-based classification with label noise},
+  author={Blanco, V{\'\i}ctor and Jap{\'o}n, Alberto and Puerto, Justo},
+  journal={Computers \& Industrial Engineering},
+  volume={172},
+  pages={108611},
+  year={2022},
+  publisher={Elsevier}
+}
+
+@article{mercer_theorem,
+  title={Xvi. functions of positive and negative type, and their connection the theory of integral equations},
+  author={Mercer, James},
+  journal={Philosophical transactions of the royal society of London. Series A, containing papers of a mathematical or physical character},
+  volume={209},
+  number={441-458},
+  pages={415--446},
+  year={1909},
+  publisher={The Royal Society London}
+}
+
+@article{RKHS,
+  title={Reproducing Kernel Hilbert Space, Mercer's Theorem, Eigenfunctions, Nystr$\backslash$" om Method, and Use of Kernels in Machine Learning: Tutorial and Survey},
+  author={Ghojogh, Benyamin and Ghodsi, Ali and Karray, Fakhri and Crowley, Mark},
+  journal={arXiv preprint arXiv:2106.08443},
+  year={2021}
 }
