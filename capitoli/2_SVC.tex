@@ -46,7 +46,7 @@ Si vorrebbe quindi un modello sufficientemente complesso per approssimare la rel
 \label{fig:esempio_underfitting_overfitting}
 \end{figure}
 
-I \emph{metodi kernel}\cite{2007_kernel_methods} sono una famiglia di approcci per risolvere vari problemi tipici dell'apprendimento automatico. La particolarità sta nel fatto che non si tratta di metodi creati \emph{ad hoc}, ma di estensioni di algoritmi lineari già noti, potenziati per poter esprimere relazioni più complesse.
+I \emph{metodi kernel}~\cite{2007_kernel_methods} sono una famiglia di approcci per risolvere vari problemi tipici dell'apprendimento automatico. La particolarità sta nel fatto che non si tratta di metodi creati \emph{ad hoc}, ma di estensioni di algoritmi lineari già noti, potenziati per poter esprimere relazioni più complesse.
 L'idea alla base dei metodi \emph{kernel} è di mappare i dati dallo spazio originale $\mathcal{X}$ ad un nuovo spazio $\mathcal{H}$, chiamato \emph{spazio delle feature}, di dimensionalità maggiore rispetto ad $\mathcal{X}$, potenzialmente infinita, utilizzando la trasformazione non lineare $\Phi: \mathcal{X} \rightarrow \mathcal{H}$.
 Nello spazio delle \emph{feature} i dati diventano linearmente separabili, ed è quindi possibile utilizzare un modello lineare espresso esclusivamente in termini di prodotto scalare tra elementi in $\mathcal{H}$, ma che esprime una relazione non lineare in $\mathcal{X}$.
 
@@ -62,16 +62,16 @@ per cui per ogni $\Vec{x}, \Vec{z} \in \mathcal{X}$ vale
 \end{equation*}
 Questa funzione $K$ è chiamata \emph{funzione kernel}.
 Un metodo \emph{kernel} è un algoritmo di addestramento che riesce a sfruttare una funzione \emph{kernel} nelle fasi di addestramento e predizione, rendendo in questo modo non necessario l'utilizzo di $\Phi$, perché il prodotto scalare delle immagini $\Phi(\Vec{x}) \cdot \Phi(\Vec{z})$ è funzione del prodotto scalare tra $\Vec{x}, \Vec{z}$ nello spazio originale.
-Questo calcolo è possibile perché $\mathcal{H}$ è un \emph{reproducing kernel Hilbert space}(RKHS)~\cite{RKHS}.
+Questo calcolo è possibile perché $\mathcal{H}$ è un \emph{reproducing kernel Hilbert space} (RKHS)~\cite{RKHS}.
 
 Con un metodo \emph{kernel} si cerca di sfruttare la semplicità di un modello lineare nello spazio delle \emph{feature} ma in grado di modellare relazioni complesse nello spazio originale.
 Il~\Cref{sec:kernel_trick} riporta una spiegazione più approfondita dell'applicazione del metodo \emph{kernel} ai modelli SVC.
 
-Tra i metodi \emph{kernel} più noti possiamo citare \emph{kernel principal component analysis}\cite{kernel_PCA} o \emph{kernel perceptron}\cite{kernel_perceptron}, ma l'approccio forse più importante è quello relativo alla famiglia delle \emph{support vector machine}, che include varianti per risolvere sia problemi di classificazione che di regressione.
+Tra i metodi \emph{kernel} più noti possiamo citare \emph{kernel principal component analysis}~\cite{kernel_PCA} o \emph{kernel perceptron}~\cite{kernel_perceptron}, ma l'approccio forse più importante è quello relativo alla famiglia delle \emph{support vector machine}, che include varianti per risolvere sia problemi di classificazione che di regressione.
 Introdotti inizialmente per problemi di classificazione, i modelli SVC estendono il concetto di \emph{maximal margin classifier}. 
 L'addestramento di un modello SVC ha come obiettivo quello di trovare un iperpiano che separa i punti appartenenti a due classi diverse con il massimo margine di separazione ottenibile. 
 Questo approccio era inizialmente limitato a problemi lineari senza ammissione di dati erroneamente etichettati. 
-Nei primi anni novanta, con l'introduzione del metodo \emph{kernel}\cite{1992_hardmargin_svm} prima e con l'introduzione della formulazione \emph{soft margin}\cite{1995_svm} poi, i modelli SVC divennero delle buone opzioni per risolvere problemi di classificazione non lineari e con dati erroneamente etichettati, riscuotendo un buon successo e ottenendo in alcuni casi \emph{performance} comparabili e spesso superiori ad altri modelli avanzati. 
+Nei primi anni novanta, con l'introduzione del metodo \emph{kernel}~\cite{1992_hardmargin_svm} prima e con l'introduzione della formulazione \emph{soft margin}~\cite{1995_svm} poi, i modelli SVC divennero delle buone opzioni per risolvere problemi di classificazione non lineari e con dati erroneamente etichettati, riscuotendo un buon successo e ottenendo in alcuni casi \emph{performance} comparabili e spesso superiori ad altri modelli avanzati. 
 
 Si trovano in letteratura diversi approcci che modificano la formulazione SVM originale, come per esempio \emph{$\nu$-svm}\cite{2000_nu_svm} o  \emph{p-svm}\cite{2001_p_svm}.
 In questa tesi si presterà particolare attenzione alla formulazione originale per risolvere problemi di classificazione, dato che è la formulazione di partenza considerata per l'approccio proposto nel~\Cref{sec:our_budgeted_svm}.
@@ -79,8 +79,8 @@ In questa tesi si presterà particolare attenzione alla formulazione originale p
 Le formulazioni dei modelli SVC esposte nei prossimi paragrafi sono estratte in gran parte da~\cite{1995_svm,svm_tutorial,elements-of-statistical-learning}.
 
 \section{Classificazione \emph{hard margin}}\label{sec:hard_margin_classifier}
-Si ipotizza di avere un insieme di dati $\mathcal{X} = \{\Vec{x}_i, i=1,\dots,m\}$ contenente $m$ vettori $d$-dimensionali, ovvero $\Vec{x}_i \in \mathbb{R}^d$. 
-Ogni $\Vec{x}_i$ ha associata un etichetta $y_i \in \{-1, +1\}$: si considerano quindi problemi di classificazione binaria.
+Si ipotizza di avere un insieme di dati $\mathcal{X} = \{\Vec{x}_i, i=1,\dots,m\}$ contenente $m$ vettori $d$-dimensionali, $\Vec{x}_i \in \mathbb{R}^d$. 
+Ogni $\Vec{x}_i$ ha associata un'etichetta $y_i \in \{-1, +1\}$: si considerano quindi problemi di classificazione binaria.
 %
 L'insieme $\mathcal{X}$ è linearmente separabile se esistono un vettore $\Vec{w} \in \mathbb{R}^d$ e uno scalare $b \in \mathbb{R}$ (chiamato \emph{bias}) che identificano un iperpiano $\Vec{w}\cdot \Vec{x} +b=0$ in grado di separare perfettamente le due classi di dati.
 \begin{figure}
@@ -123,7 +123,7 @@ Dato che $y_i\in\{-1,1\}$, i vincoli precedenti possono essere combinati in
 \begin{equation*}
     y_i(\Vec{w}\Vec{x}_i + b) \geq 1 \quad i=1, ..., m.
 \end{equation*}
-Considerando i punti per cui il vincolo precedente è un uguaglianza: i punti positivi saranno sull'iperpiano $H1: \vec{w}\cdot \vec{x} + b=+1$, con vettore normale $\vec{w}$ e distanza dall'origine $|1-b|/\norm{\vec{w}}$, mentre i punti negativi saranno sull'iperpiano $H2: \vec{w}\cdot \vec{x} + b=-1$, con vettore normale $\vec{w}$ e distanza dall'origine $|-1-b|/\norm{\vec{w}}$. Si può dimostrare che la distanza $2d$ è equivalente a $2/\norm{\vec{w}}$~\cite{svm_tutorial}.
+Considerando i punti per cui il vincolo precedente è un'uguaglianza: i punti positivi saranno sull'iperpiano $H1: \vec{w}\cdot \vec{x} + b=+1$, con vettore normale $\vec{w}$ e distanza dall'origine $|1-b|/\norm{\vec{w}}$, mentre i punti negativi saranno sull'iperpiano $H2: \vec{w}\cdot \vec{x} + b=-1$, con vettore normale $\vec{w}$ e distanza dall'origine $|-1-b|/\norm{\vec{w}}$. Si può dimostrare che la distanza $2d$ è equivalente a $2/\norm{\vec{w}}$~\cite{svm_tutorial}.
 
 L'iperpiano ottimo $H0: \Vec{w}^*\Vec{x} + b^* = 0$ è l'iperpiano che separa linearmente $\mathcal{X}$ massimizzando il margine di separazione; il simbolo $*$ indica il valore ottimo di una variabile.
 
@@ -144,17 +144,17 @@ Trovare la superficie di separazione con margine massimale equivale quindi a ris
 & \textrm{s.t.} && y_i(\Vec{w}\cdot \Vec{x}_i + b) \geq 1, && i=1,\dots,m. \\
 \end{aligned}
 \end{equation}
-Questo problema ha funzione obiettivo quadratica e vincoli lineari.
-Viene tradizionalmente risolto considerando una formulazione duale.
+Questo problema viene tradizionalmente risolto considerando una formulazione duale, che consente l'impiego del metodo \emph{kernel} più facilmente rispetto alla formulazione primale.
 
 \subsection{Formulazione duale}\label{subsec:hard_margin_dual}
 Si riscrive la funzione obiettivo del problema primale in~\Cref{eq:svc:hardmargin:primal} in una forma più conveniente e si esprimono i vincoli in forma normale, ottenendo il problema
 \begin{equation}\label{eq:svc:hardmargin:primal_convenient}
 \begin{aligned}
 & \min_{\Vec{w},b}    && \frac{1}{2}\norm{\Vec{w}}^2 \\
-& \textrm{s.t.} && y_i(\Vec{w}\cdot \Vec{x}_i + b) - 1 \geq 0, && i=1,\dots,m. \\
+& \textrm{s.t.} && y_i(\Vec{w}\cdot \Vec{x}_i + b) - 1 \geq 0, && i=1,\dots,m, \\
 \end{aligned}
 \end{equation}
+con funzione obiettivo quadratica e vincoli lineari.
 %
 Applicando il metodo dei moltiplicatori di Lagrange~\cite{optimization_book} si ottiene la funzione lagrangiana
 \begin{equation}
@@ -175,7 +175,7 @@ da minimizzare rispetto a $\Vec{w},b$ e da massimizzare rispetto ad $\Vec{\alpha
 \end{equation}
 %
 %
-Una soluzione ottima per il problema~\Cref{eq:svc:hardmargin:max_min} deve soddisfare le condizioni di Karush-Kuhn-Tucker (KKT)\cite{svm_tutorial,optimization_book}:
+Una soluzione ottima per il problema~\Cref{eq:svc:hardmargin:max_min} deve soddisfare le condizioni di Karush-Kuhn-Tucker (KKT)~\cite{svm_tutorial,optimization_book}:
 \begin{align}
     \label{eq:svc:hardmargin:kkt1}
     \pd{L_P(\Vec{w},b,\vec{\alpha})}{\Vec{w}} = \Vec{0}, \\[2mm]
@@ -219,7 +219,7 @@ L_D(\vec{\alpha})  & = \frac{1}{2}\Vec{w}\cdot\Vec{w} - \sum_{i=1}^{m} \alpha_i 
 \end{split}  
 \end{equation}
 espressa esclusivamente in funzione di $\Vec{\alpha}$.
-Aggiungendo i rimanenti vincoli si ottiene il problema duale
+Aggiungendo i rimanenti vincoli di non negatività di $\vec{\alpha}$ si ottiene il problema duale
 \begin{equation}\label{eq:svc:hardmargin:wolfe_dual}
 \begin{aligned}
 & \max_{\vec\alpha}     && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_j\Vec{x}_i\cdot\Vec{x}_j\\
@@ -234,11 +234,11 @@ Ricordando che $\Vec{w} = \sum_{i=1}^{m}\alpha_iy_i\Vec{x}_i$, è possibile calc
 \Vec{w}^* = \sum_{i=1}^{m}\alpha_i^*y_i\Vec{x}_i.
 \end{equation}
 Il vettore $\Vec{w}^*$ è definito dai i dati di addestramento $\Vec{x}_i, y_i$ con un corrispettivo moltiplicatore lagrangiano $\alpha_i > 0$: i vettori di supporto. 
-Questi punti definiscono il modello: se si rimuovessero tutti i punti che non sono vettori di supporto e si ripetesse l'addestramento (con gli stessi iperparametri), si otterrebbe lo stesso risultato.
+Questi punti definiscono il modello: se si rimuovessero tutti i punti che non sono vettori di supporto e si ripetesse l'addestramento, si otterrebbe lo stesso risultato.
 Tutti gli $\Vec{x}_i$ associati ad un moltiplicatore lagrangiano ottimo nullo $\alpha_i=0$ non influiscono sulla superficie di separazione.
 Per comodità, si definisce l'insieme
 \begin{equation*}
-    S = \{i,\quad\forall\alpha_i >0\},   
+    S = \{i \in \{1,\dots,m\} :\alpha_i >0\},   
 \end{equation*}
 che contiene tutti gli indici corrispondenti a vettori di supporto.
 
@@ -260,9 +260,9 @@ Pertanto,
 \begin{equation*}
 b^*=y_i - \Vec{w}^*\cdot\Vec{x}_i.
 \end{equation*} 
-Nella pratica, per ottenere un valore numericamente più stabile, si calcola la media tra ogni $b^*$ calcolato su ogni vettore di supporto.
+Nella pratica, per ottenere un valore numericamente più stabile, si calcola la media dei $b^*$ calcolati su tutti i vettori di supporto.
 
-Ricapitolando, risolvendo il problema duale in~\Cref{eq:svc:hardmargin:wolfe_dual} otteniamo i moltiplicatori lagrangiani ottimi $\alpha_1^*, ..., \alpha_m^*$ che consentono di calcolare $\Vec{w}^*$ come combinazione lineare tra i vettori di supporto e in seguito calcolare $b^*$. 
+Ricapitolando, risolvendo il problema duale in~\Cref{eq:svc:hardmargin:wolfe_dual} otteniamo i moltiplicatori lagrangiani ottimi $\alpha_1^*, ..., \alpha_m^*$ che consentono di calcolare $\Vec{w}^*$ come combinazione lineare dei vettori di supporto e in seguito di calcolare $b^*$. 
 Tutti gli altri dati di addestramento non influiscono sulla soluzione. 
 A questo punto, è costruito il classificatore $h(\Vec{x}) = \sign(\Vec{w}^*\cdot \Vec{x} +b^*)$.
 La predizione della classe di un nuovo esempio $\Vec{x}_\text{test}$ sarà ottenuta calcolando 
@@ -284,7 +284,9 @@ Si riportano due esempi di questi scenari in~\Cref{fig:svc:softmargin:casi_che_h
     \caption{A sinistra un esempio di dataset non linearmente separabile, non risolvibile con il modello \emph{hard margin}. A destra un caso linearmente separabile la cui soluzione \emph{hard margin} è fortemente influenzata da un \emph{outlier}. I dati con segno ``X'' sono erroneamente etichettati.}
     \label{fig:svc:softmargin:casi_che_hardmargin_non_risolve}
 \end{figure}
-Per generalizzare il modello \emph{support vector classifier} e renderlo tollerante ad errori di classificazione, si riformula il problema di ottimizzazione in~\Cref{eq:svc:hardmargin:primal}, introducendo $m$ variabili di \emph{slack}/scarto $\xi_i \geq 0 \quad i=1,...,m$, una per ogni dato di addestramento. Ogni valore $\xi_i$ sarà proporzionale alla distanza tra $\Vec{x}_i$ erroneamente classificato e la superficie di separazione. $\xi_i$ sarà nulla per ogni $\Vec{x}_i$ correttamente classificato. Resta da definire come utilizzare le variabili di \emph{slack} per penalizzare la scelta di dati erroneamente classificati. 
+Per generalizzare il modello \emph{support vector classifier} e renderlo tollerante ad errori di classificazione, si riformula il problema di ottimizzazione in~\Cref{eq:svc:hardmargin:primal}, introducendo $m$ variabili di \emph{slack}/scarto $\xi_i \geq 0 \quad i=1,...,m$, una per ogni dato di addestramento. 
+Ogni valore $\xi_i$ sarà proporzionale alla distanza tra $\Vec{x}_i$ erroneamente classificato e la superficie di separazione. 
+La variabile $\xi_i$ sarà nulla per ogni $\Vec{x}_i$ correttamente classificato. Resta da definire come utilizzare le variabili di \emph{slack} per penalizzare la scelta di dati erroneamente classificati. 
 In generale si definisce il problema primale
 \begin{equation}
 \begin{aligned}
@@ -310,7 +312,7 @@ Si riporta in~\Cref{fig:soft_margin} un esempio di modello \emph{soft margin} pe
 \begin{figure}
     \centering
     \includegraphics[width=.7\linewidth]{img/soft_margin.pdf}
-    \caption{Con la formulazione \emph{soft margin} si tollerano esempi dalla parte sbagliata del margine ($\xi_i>1$) o troppo vicini al margine ($0<\xi_i<1$). I punti in questione sono rappresentati in figura con un segno ``X''.}
+    \caption{Con la formulazione \emph{soft margin} si tollerano esempi dalla parte sbagliata della superficie di separazione ($\xi_i>1$) o troppo vicini alla superficie di separazione ($0<\xi_i<1$). I punti in questione sono rappresentati in figura con un segno ``X''.}
     \label{fig:soft_margin}
 \end{figure}
 
@@ -509,7 +511,7 @@ h(\Vec{x}_\text{test})  &= \sign(\Vec{w}^*\cdot\Phi(\vec{x}_{text}) +b^*) =\\
 \end{align*}
 
 In uno spazio con più dimensioni rispetto all'originale, è sempre possibile trovare un margine di separazione in grado di dividere i dati delle due classi perfettamente. % sempre anche con una sola dimensione in più. e.g. phi([x1]) -> [x1,y1] dove y1 è il label.
-Pur essendo un risultato più preciso dal punto di vista del problema di ottimizzazione, potrebbe invece essere \emph{overfitting}. Rimane dunque cruciale la scelta del parametro $C$. 
+Pur essendo un risultato più preciso dal punto di vista del problema di ottimizzazione, potrebbe invece causare \emph{overfitting}. Rimane dunque cruciale la scelta del parametro $C$. 
 Per valori di $C$ troppo alti, il modello cercherà di adattarsi troppo fedelmente ai dati di addestramento, creando una superficie di separazione inutilmente complessa nello spazio originale e con pessime capacità di generalizzazione. 
 Al contrario, un valore basso di $C$ porterà ad una superficie di separazione più semplice e regolare, bilanciando però con più errori di classificazione. 
 Per trovare un valore di $C$ soddisfacente, raggiungendo un buon compromesso tra complessità della superficie di separazione ed errori di classificazione, si utilizzano in genere delle tecniche di \emph{model selection} (viste nel~\Cref{sec:model_selection}).  
@@ -519,7 +521,7 @@ Per trovare un valore di $C$ soddisfacente, raggiungendo un buon compromesso tra
 I \emph{support vector classifier} presentano alcune limitazioni di cui serve tener conto. 
 Sono modelli suscettibili alla presenza di \emph{outlier}, intesi come dati erroneamente classificati o rumore. L'approccio \emph{soft-margin} consente di trattare anche problemi di questo tipo, ma la soluzione trovata potrebbe comunque subire (in misura variabile) l'effetto degli \emph{outlier}, dato che ognuno di questi punti diventerà un vettore di supporto con una relativa variabile di \emph{slack} che influirà sul valore della funzione obiettivo. 
 Di conseguenza, i modelli SVC addestrati su dataset con rumore hanno in genere performance peggiori rispetto ad altri tipi di modelli pensati specificatamente per dati con molti outlier, per esempio approcci chiamati \emph{robusti} \cite{2019_robust_classification}.
-La presenza di rumore nel dataset è comunque un problema comune a tutti i modelli di apprendimento automatico e non riguarda solo \emph{support vector machine}.
+La presenza di rumore nel dataset è comunque un problema comune a tutti i modelli di apprendimento automatico e non riguarda solo i modelli \emph{support vector machine}.
 
 Una seconda limitazione riguarda la scalabilità. La procedura di addestramento considera tutti i dati disponibili e risulta quindi troppo costosa da eseguire su grandi quantità di dati, o su dati con un alto numero di feature, pur utilizzando un algoritmo di ottimizzazione numerica efficiente, come \emph{sequential minimal optimization} \cite{SMO}.
 

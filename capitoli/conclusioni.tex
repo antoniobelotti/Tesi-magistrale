@@ -1,2 +1,25 @@
 \chapter{Conclusioni e sviluppi futuri}
 \label{chap:conclusioni}
+In questa tesi è stato proposto un approccio per addestrare modelli SVC con un ristretto numero di vettori di supporto.
+Gli esperimenti effettuati su diversi dataset sintetici evidenzia come il metodo sia promettente:
+\begin{itemize}
+    \item Per alcuni dataset la riduzione in termini di spazio può essere significativa, con una riduzione in termini di accuratezza non significativa.
+    \item Per altri dataset la valutazione dell'approccio è più difficoltosa perché si evidenziano casi in cui la riduzione in spazio non intacca l'accuratezza e altri in cui invece la intacca significativamente.
+    \item Esprimendo il budget come percentuale della dimensione del dataset, si nota come valori tra il $5\%$ ed il $7\%$ possano essere delle buone scelte per risparmiare spazio senza sacrificare troppo in termini di efficacia.
+\end{itemize}
+
+Gli esperimenti effettuati su dataset di terze parti confermano le osservazioni effettuate sui dataset sintetici. ..................
+
+
+Il confronto con altri metodi evidenzia come \emph{budgeted SVC}..................
+
+
+Il lavoro iniziato in questa tesi potrebbe sicuramente essere sviluppato ulteriormente, cercando di espandere o migliorare alcuni aspetti, per esempio:
+\begin{itemize}
+    \item Si potrebbero utilizzare dataset sintetici di dimensione maggiore e/o dataset con un più alto numero di feature. Si potrebbero utilizzare ulteriori dataset di terze parti con caratteristiche diverse rispetto a quelli già considerati.
+    \item Si potrebbero proporre ulteriori indicazioni o dei criteri più solidi per come impostare dei valori di budget a priori, per esempio in base alle caratteristiche dei dati disponibili.
+    \item Si potrebbero incorporare delle proposte presentate in letteratura, per esempio per limitare l'effetto del rumore o per rendere il problema trattabile con altri metodi risolutivi.
+    \item Si potrebbe investigare un eventuale relazione tra \emph{budget} e rumore, per capire se una quantità molto stringente di \emph{budget} corrisponda ad una maggior robustezza rispetto a dati erroneamente etichettati.
+    \item ....
+\end{itemize}
+
