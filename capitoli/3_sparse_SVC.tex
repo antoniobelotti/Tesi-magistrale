@@ -14,7 +14,7 @@ La predizione della classe per un punto $\Vec{x}_\text{new}$ mai visto in fase d
 \Vec{w}^*\cdot\Phi(\Vec{x}_\text{new}) = \sum_{i=1}^{S} \alpha^*_iy_i\Phi(\Vec{x}_i) \cdot \Phi(\Vec{x}_\text{new}) = \sum_{i=1}^{S} \alpha^*_iy_iK(\Vec{x}_i, \Vec{x}_\text{new})
 \end{equation}
 dove gli $\alpha^*_i$ sono i moltiplicatori lagrangiani ottimi. 
-Il \emph{reduced set method} consiste nell'identificare un insieme di punti $\Vec{z}_a \in \mathcal{L}$ con $a=1,\dots,N_z$ e dei corrispettivi pesi $\gamma_a \in \mathbb{R}$ che identificano 
+Il \emph{reduced set method} consiste nell'identificare un insieme di punti $\Vec{z}_a \in \mathcal{X}$ con $a=1,\dots,N_z$ e dei corrispettivi pesi $\gamma_a \in \mathbb{R}$ che identificano 
 \begin{equation*}
     \Vec{w}^{'} = \sum_{a=1}^{N_z}\gamma_a\cdot\Phi(\Vec{z}_a),
 \end{equation*} 
@@ -38,8 +38,8 @@ Questo approccio richiede però una conoscenza specifica relativa al problema tr
 
 Un approccio simile al \emph{reduced set method}, ma meno oneroso dal punto di vista computazionale, è quello proposto in~\cite{2005_merging_strategy}, dove coppie di vettori di supporto originali sono iterativamente sostituite da un singolo vettore di supporto sintetico, a seconda di particolari condizioni. 
 
-Un altro metodo per ridurre il numero di vettori di supporto è quello proposto in~\cite{1998_reducing_svm_complexity}. 
-Sempre in seguito all'addestramento di un modello, si rimuovono i vettori di supporto che contribuiscono a rendere la superficie di separazione troppo contorta, utilizzando un modello \emph{support vector regression machine} (SVRM) per approssimare la superficie di separazione originale.
+Un altro metodo per ridurre il numero di vettori di supporto è quello proposto in~\cite{1998_reducing_svm_complexity}:
+sempre in seguito all'addestramento di un modello, si rimuovono i vettori di supporto che contribuiscono a rendere la superficie di separazione troppo contorta, utilizzando un modello \emph{support vector regression machine} (SVRM) per approssimare la superficie di separazione originale.
 Per risolvere questo problema di regressione si suggerisce di utilizzare lo stesso kernel utilizzato per addestrare il modello di classificazione.
 L'approccio è simile al \emph{reduced set method} ma è meno vantaggioso nei casi in cui i moltiplicatori $\alpha$ siano strettamente nell'intervallo $[0,C]$, oppure in generale quando la superficie di separazione è particolarmente contorta nello spazio delle \emph{feature}.
 
@@ -64,7 +64,7 @@ In~\cite{2003_online_classification_on_a_budget} si descrive una variante che ma
 Viene battezzata \emph{variable size cache} perché non viene imposto un limite fisso alla sua dimensione (\emph{variable size} appunto) e gli elementi già presenti possono essere rimossi secondo una strategia adatta, proprio come una \emph{cache} generica. 
 Questi algoritmi di gestione della \emph{cache} vengono ripresi in lavori successivi, per esempio in~\cite{2012_bsgd} (poi utilizzato per effettuare esperimenti descritti nel~\cref{sec:comparazione_metodi}).
 Formalmente, per una generica variante di \emph{perceptron on-line}, al tempo $t$ l'algoritmo riceve un nuovo dato $\Vec{x}_t$ con la corrispettiva etichetta $y_t$: si calcola $s_t = \sum_{i<t} \alpha_iy_iK(\Vec{x}_i, \Vec{x}_t)$ da cui si ricava la predizione $\sign(s_t)$. 
-L'algoritmo \emph{perceptron} nella forma originale usa come parametri $\beta_t=0, \alpha_t=1, c_t=1$. 
+L'algoritmo \emph{perceptron} nella forma originale usa come iperparametri $\beta_t=0, \alpha_t=1, c_t=1$. 
 Per decidere se $\Vec{x}_t$ debba essere selezionato come nuovo vettore di supporto si valuta la condizione $y_ts_t \leq \beta_t$.
 La strategia per effettuare questa aggiunta dipende dall'algoritmo specifico. 
 Per prima cosa, serve assegnare un valore ad $\alpha_t$ (che non necessariamente è fisso). 
@@ -84,7 +84,7 @@ Si introduce in~\cite{2007_random_removal} il \emph{random perceptron}, una vari
 
 I metodi in~\cite{2003_online_classification_on_a_budget,2005_forgetron,2007_random_removal} usano la strategia di rimozione dei vettori di supporto ma con criteri diversi.
 
-Si introduce in~\cite{2008_projectron} il \emph{projectron}, una variante che utilizza una strategia di proiezione: un punto viene aggiunto come vettore di supporto se la sua proiezione sulla copertura lineare nello spazio delle \emph{feature} eccede un limite definito \emph{a priori}. 
+Si introduce in~\cite{2008_projectron} il \emph{projectron}, una variante che utilizza una strategia di proiezione: un punto viene aggiunto come vettore di supporto se la sua proiezione sulla copertura lineare~\cite{2008_projectron} nello spazio delle \emph{feature} eccede un limite definito \emph{a priori}. 
 %``The new vector is added to the support set if its projection onto the linear span of others in the feature space exceeds a predefined threshold, or otherwise its information is kept through the projection.''
 %
 
@@ -135,7 +135,7 @@ dove la funzione di penalità $\mathrm{erf}$ è proposta come
 \mathrm{erf}(\xi, \sigma) = \frac{2}{\sqrt{\pi}\sigma} \int_{0}^{\xi}e^{\frac{-z^2}{\sigma^2}} dz.
 \]
 %
-Il problema~\Cref{eq:adaptively_penalizing_outliers} si può comunque risolvere considerando la rispettiva formulazione duale, rendendo questo approccio relativamente facile da implementare e trattare con tecniche note, per esempio modificando \emph{sequential minimal optimization} (SMO)\cite{SMO}.
+Il problema~\Cref{eq:adaptively_penalizing_outliers} si può comunque risolvere considerando la rispettiva formulazione duale, rendendo questo approccio relativamente facile da implementare e trattare con tecniche note, per esempio modificando \emph{sequential minimal optimization} (SMO)~\cite{SMO}.
 
 % \cite{2001_ssvm_smooth_svm} propone di rimpiazzare la norma l1 delle variabili di scarto nella funzione obiettivo del problema primale \emph{soft-margin} con il quadrato della norma l2. Per rendere la funzione obiettivo doppiamente differenziabile (?) utilizza una smooth approximation function (?) così il problema può essere risolto con un fast newton method (?). 
 
@@ -236,8 +236,9 @@ I metodi descritti in questo paragrafo non riducono esplicitamente il numero di 
 In aggiunta, alcuni di questi metodi utilizzano (almeno per la fase sperimentale) delle formulazioni con variabili intere, caratteristica in comune con il metodo proposto in questa tesi descritto nel~\Cref{sec:our_budgeted_svm}, contribuendo a dimostrare la fattibilità di approcci basati su questo tipo di formulazioni.
 
 \section{Budgeted SVC}\label{sec:our_budgeted_svm}
-Questo paragrafo descrive la modellazione proposta in questa tesi per produrre modelli SVC parsimoniosi.
+Questo paragrafo descrive la modellazione proposta in questa tesi per produrre modelli SVC parsimoniosi, chiamata \emph{budgeted SVC}.
 L'idea è quella di modificare la formulazione duale \emph{soft margin} vista in~\Cref{eq:svc:softmargin:wolfe_dual_plus_kernel_trick} introducendo variabili e vincoli adatti per forzare un limite superiore al numero di vettori di supporto.
+In particolare, il numero massimo di vettori di supporto consentito è impostato tramite l'iperparametro \emph{budget}, un numero intero da fissare \emph{a priori}.
 
 Una primo tentativo prevede l'introduzione di $m$ variabili continue $\gamma_i,\quad i=1,\dots,m$, ognuna associata ad un dato $\Vec{x}_i$, con dei rispettivi vincoli per forzare ogni $\gamma_i\approx1$ se $\Vec{x}_i$ è scelto come vettore di supporto, oppure per forzare $\gamma_i\approx0$ in caso contrario.
 La formulazione proposta è 
@@ -250,14 +251,14 @@ La formulazione proposta è
 &               && \sum_{i=1}^{m} \gamma_i \leq B,                   \\
 \end{aligned}
 \end{equation}
-dove $B$ è il \emph{budget}, un iperparametro da scegliere, e dove la funzione $P$ è scelta in modo da forzare (per una soluzione ottima) le variabili $\gamma_i$ vicino a $0$ o $1$, simulando una variabile binaria.
+dove $B$ è il \emph{budget} e dove la funzione $P$ è scelta in modo da forzare (per una soluzione ottima) le variabili $\gamma_i$ vicino a $0$ o $1$, simulando una variabile binaria.
 Una possibile scelta per $P$ potrebbe essere 
 $$P(\gamma_1, \dots, \gamma_n) = \prod_i -\gamma_i (1 - \gamma_i),$$
 oppure 
 $$P(\gamma_1, \dots, \gamma_n) = \prod_i \left( \gamma_i^{\gamma_i} (1 - \gamma_i)^{1 - \gamma_i} - 1 \right).$$
 %
 %
-L'utilizzo di variabili $\gamma_i$ continue, consentirebbe l'utilizzo di risolutori basati sul metodo della discesa del gradiente, il che sarebbe vantaggioso a livello pratico sia per le buone performance sia per la facilità di implementazione. 
+L'utilizzo di variabili $\gamma_i$ continue consentirebbe l'utilizzo di risolutori basati sul metodo della discesa del gradiente, il che sarebbe vantaggioso a livello pratico sia per le buone performance sia per la facilità di implementazione. 
 Tuttavia, l'introduzione della funzione $P$ rende il problema non quadratico: dopo alcuni esperimenti preliminari, notando anche l'instabilità del metodo, si accantona questa formulazione.
 
 Viene proposta quindi una formulazione leggermente diversa che definisce le variabili $\gamma_i$ come variabili booleane:

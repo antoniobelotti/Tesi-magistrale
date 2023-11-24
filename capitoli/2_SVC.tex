@@ -1,6 +1,6 @@
 \chapter{Support Vector Machine}\label{chap:SVC}
 In questo capitolo si descrive genericamente la famiglia dei modelli \emph{support vector machine} (SVM) e in dettaglio la formulazione del modello per risolvere problemi di classificazione (\emph{support vector classifier}, o SVC). 
-Nel~\Cref{sec:kernel_methods} si fornisce una breve introduzione ai metodi \emph{kernel} e alla famiglia dei modelli SVM. 
+Nel~\Cref{sec:kernel_methods} si fornisce una breve introduzione ai metodi \emph{kernel} e ai modelli SVC. 
 Nel~\Cref{sec:hard_margin_classifier} si descrive la formulazione \emph{hard margin} per problemi di classificazione, che non ammette dati erroneamente etichettati.
 Nel~\Cref{sec:soft_margin_classifier} si descrive la formulazione \emph{soft margin} per problemi di classificazione, che ammette la presenza di dati erroneamente etichettati.
 Nel~\Cref{sec:kernel_trick} si descrive l'utilizzo del metodo \emph{kernel} per i modelli SVC.
@@ -10,44 +10,15 @@ Per concludere, nel~\Cref{sec:svc_limiti} si descrivono in generale le principal
 \`E possibile suddividere i modelli di apprendimento automatico in due categorie: modelli lineari e modelli non lineari. 
 I modelli lineari vengono utilizzati nei casi in cui si assume che la relazione tra i dati di addestramento $\Vec{x}$ e le etichette $y$ possa essere approssimata in modo accettabile da una funzione lineare $f(\Vec{x}) = \Vec{w}\cdot\Vec{x} + b$, mentre i modelli non lineari sono in grado di approssimare relazioni più complesse.
 %I modelli non lineari vengono utilizzati nei casi in cui questa assunzione non si dimostra vera, e per cui serve definire una funzione più complessa per approssimare la relazione.
-In genere, produrre un modello lineare è relativamente facile, ma molti scenari reali esprimono relazioni non lineari. 
+In genere, produrre un modello lineare è relativamente facile dal punto di vista teorico, ma molti scenari reali esprimono relazioni non lineari. 
 Adottare un modello lineare in questi casi porterebbe ad insufficienti capacità di generalizzazione, dovute alla troppa semplicità del modello (\emph{underfitting}). 
 \`E quindi necessario sviluppare algoritmi per produrre modelli in grado di esprimere relazioni non lineari, ma utilizzare un modello più complesso potrebbe comunque portare ad insufficienti capacità di generalizzazione. 
-Questo problema si potrebbe verificare nel caso in cui il modello si adatti troppo fedelmente ai dati di addestramento (\emph{overfitting}).
-Questa problematica è descritta nel~\Cref{sec:bias_variance_tradeoff}; mentre in~\Cref{fig:esempio_underfitting_overfitting} si mostrano esempi di \emph{underfitting} o \emph{overfitting}.
+Questo problema si potrebbe verificare nel caso in cui il modello si adatti troppo fedelmente ai dati di addestramento (\emph{overfitting}, descritto nel~\Cref{sec:bias_variance_tradeoff}).
 
 Si vorrebbe quindi un modello sufficientemente complesso per approssimare la relazione espressa dai dati, ma allo stesso tempo non troppo complesso da soffrire di \emph{overfitting}; si vorrebbe la semplicità di un modello lineare con le capacità di modellazione di un modello non lineare. 
-% TODO: potrebbe benissimo andare nel capitolo 1
-\begin{figure}
-    \begin{subfigure}[t]{.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/under_over_fitting_1.pdf}
-        \caption{Il colore identifica la classe; i punti scorrettamente etichettati sono indicati con il simbolo x.}
-    \end{subfigure}%
-    \hfill
-    \begin{subfigure}[t]{.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/under_over_fitting_2.pdf}
-        \caption{Esempio di come un modello lineare potrebbe esibire \emph{underfitting}.}
-    \end{subfigure}%
-\vskip\baselineskip
-    \begin{subfigure}[t]{.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/under_over_fitting_3.pdf}
-        \caption{Esempio di come un modello non lineare potrebbe esibire \emph{overfitting}.}
-    \end{subfigure}%
-    \hfill
-    \begin{subfigure}[t]{.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/under_over_fitting_4.pdf}
-        \caption{Esempio di una possibile superficie di separazione con buone capacità di generalizzazione.}
-    \end{subfigure}%
-\caption{Esempio di \emph{underfitting} e \emph{overfitting} su un dataset per un problema di classificazione binaria.}
-\label{fig:esempio_underfitting_overfitting}
-\end{figure}
 
 I \emph{metodi kernel}~\cite{2007_kernel_methods} sono una famiglia di approcci per risolvere vari problemi tipici dell'apprendimento automatico. La particolarità sta nel fatto che non si tratta di metodi creati \emph{ad hoc}, ma di estensioni di algoritmi lineari già noti, potenziati per poter esprimere relazioni più complesse.
-L'idea alla base dei metodi \emph{kernel} è di mappare i dati dallo spazio originale $\mathcal{X}$ ad un nuovo spazio $\mathcal{H}$, chiamato \emph{spazio delle feature}, di dimensionalità maggiore rispetto ad $\mathcal{X}$, potenzialmente infinita, utilizzando la trasformazione non lineare $\Phi: \mathcal{X} \rightarrow \mathcal{H}$.
+L'idea alla base dei metodi \emph{kernel} è di immergere i dati dallo spazio originale $\mathcal{X}$ ad un nuovo spazio $\mathcal{H}$, chiamato spazio delle \emph{feature}, di dimensionalità maggiore rispetto ad $\mathcal{X}$, potenzialmente infinita, utilizzando la trasformazione non lineare $\Phi: \mathcal{X} \rightarrow \mathcal{H}$.
 Nello spazio delle \emph{feature} i dati diventano linearmente separabili, ed è quindi possibile utilizzare un modello lineare espresso esclusivamente in termini di prodotto scalare tra elementi in $\mathcal{H}$, ma che esprime una relazione non lineare in $\mathcal{X}$.
 
 Questo procedimento è però costoso dal punto di vista computazionale: va calcolata $\Phi$ per ogni punto e poi va calcolato il prodotto interno tra tutte le coppie di elementi.
@@ -67,16 +38,16 @@ Questo calcolo è possibile perché $\mathcal{H}$ è un \emph{reproducing kernel
 Con un metodo \emph{kernel} si cerca di sfruttare la semplicità di un modello lineare nello spazio delle \emph{feature} ma in grado di modellare relazioni complesse nello spazio originale.
 Il~\Cref{sec:kernel_trick} riporta una spiegazione più approfondita dell'applicazione del metodo \emph{kernel} ai modelli SVC.
 
-Tra i metodi \emph{kernel} più noti possiamo citare \emph{kernel principal component analysis}~\cite{kernel_PCA} o \emph{kernel perceptron}~\cite{kernel_perceptron}, ma l'approccio forse più importante è quello relativo alla famiglia delle \emph{support vector machine}, che include varianti per risolvere sia problemi di classificazione che di regressione.
+Tra i metodi \emph{kernel} più noti, l'approccio forse più importante è quello relativo alla famiglia delle \emph{support vector machine}, che include varianti per risolvere sia problemi di classificazione che di regressione.
 Introdotti inizialmente per problemi di classificazione, i modelli SVC estendono il concetto di \emph{maximal margin classifier}. 
 L'addestramento di un modello SVC ha come obiettivo quello di trovare un iperpiano che separa i punti appartenenti a due classi diverse con il massimo margine di separazione ottenibile. 
 Questo approccio era inizialmente limitato a problemi lineari senza ammissione di dati erroneamente etichettati. 
 Nei primi anni novanta, con l'introduzione del metodo \emph{kernel}~\cite{1992_hardmargin_svm} prima e con l'introduzione della formulazione \emph{soft margin}~\cite{1995_svm} poi, i modelli SVC divennero delle buone opzioni per risolvere problemi di classificazione non lineari e con dati erroneamente etichettati, riscuotendo un buon successo e ottenendo in alcuni casi \emph{performance} comparabili e spesso superiori ad altri modelli avanzati. 
 
 Si trovano in letteratura diversi approcci che modificano la formulazione SVM originale, come per esempio \emph{$\nu$-svm}\cite{2000_nu_svm} o  \emph{p-svm}\cite{2001_p_svm}.
-In questa tesi si presterà particolare attenzione alla formulazione originale per risolvere problemi di classificazione, dato che è la formulazione di partenza considerata per l'approccio proposto nel~\Cref{sec:our_budgeted_svm}.
+In questa tesi si presterà particolare attenzione alla formulazione originale per risolvere problemi di classificazione.
 
-Le formulazioni dei modelli SVC esposte nei prossimi paragrafi sono estratte in gran parte da~\cite{1995_svm,svm_tutorial,elements-of-statistical-learning}.
+Le formulazioni dei modelli SVC esposte nei prossimi paragrafi sono estratte in gran parte da~\cite{1995_svm,svm_tutorial,elements-of-statistical-learning,RKHS}.
 
 \section{Classificazione \emph{hard margin}}\label{sec:hard_margin_classifier}
 Si ipotizza di avere un insieme di dati $\mathcal{X} = \{\Vec{x}_i, i=1,\dots,m\}$ contenente $m$ vettori $d$-dimensionali, $\Vec{x}_i \in \mathbb{R}^d$. 
@@ -102,7 +73,7 @@ Per configurare un problema trattabile è necessario quantificare il margine.
 Sia $d$ la distanza tra la superficie di separazione e il punto più vicino etichettato come positivo. 
 Dato che si vorrebbero separare al meglio le due classi, la superficie di separazione dovrà trovarsi alla stessa distanza anche rispetto al punto più vicino etichettato come negativo.
 In~\Cref{fig:optimal_separation_margin} si può vedere un esempio per un insieme di dati in due dimensioni.
-Il margine è quindi $M=2d$, ma è possibile trasformarlo in una forma più conveniente.
+Il margine è quindi $M=2d$, ma è possibile trasformarlo in una forma analitica più conveniente per configurare il problema.
 Si definiscono a tale scopo i vincoli 
 \begin{equation*}\label{eq:svc:hardmargin:margin_1}
     \Vec{w}\Vec{x}_i + b \geq 1 \quad \text{se} \quad y_i = +1 \quad  i=1,\dots,m,
@@ -136,7 +107,7 @@ I punti $\Vec{x}_i$ per cui $\Vec{w}^*\Vec{x}_i + b^* = \pm 1$ sono chiamati \em
 \end{figure}
 %
 Massimizzare il margine $2/\norm{\vec{w}}$ equivale a minimizzare $\norm{\Vec{w}}$. 
-Trovare la superficie di separazione con margine massimale equivale quindi a risolvere il problema di ottimizzazione
+Trovare la superficie di separazione con margine massimo equivale quindi a risolvere il problema di ottimizzazione
 \begin{equation}
 \label{eq:svc:hardmargin:primal}
 \begin{aligned}
@@ -244,7 +215,7 @@ che contiene tutti gli indici corrispondenti a vettori di supporto.
 
 I modelli SVC si possono inserire nella categoria degli \emph{instance based learner}, dato che eseguono predizioni utilizzando un sottoinsieme dei dati di addestramento.
 
-Per costruire il classificatore $h(\Vec{x}) = \sign(\Vec{w}\cdot \Vec{x} +b)$ rimane ancora da calcolare $b$.  Dalla condizione di KKT~\Cref{eq:svc:hardmargin:kkt5}, la soluzione ottima soddisferà il vincolo 
+Per costruire il classificatore $h(\Vec{x}) = \sign(\Vec{w}\cdot \Vec{x} +b)$ rimane ancora da calcolare $b$.  Dalla condizione di KKT in~\Cref{eq:svc:hardmargin:kkt5}, la soluzione ottima soddisferà il vincolo 
 \begin{equation*}
 \alpha_i^*(y_i(\Vec{w}^*\cdot\Vec{x}_i+b^*)-1)=0.
 \end{equation*}
@@ -275,18 +246,19 @@ I modelli ottenuti risolvendo il problema~\Cref{eq:svc:hardmargin:wolfe_dual} so
 
 \section{Classificazione \emph{soft margin}}\label{sec:soft_margin_classifier}
 La formulazione \emph{hard margin} funziona solo su dati linearmente separabili, il che rende il modello troppo rigido per essere applicato su dataset tratti da problemi reali, che spesso esibiscono relazioni più complesse. 
-Anche nel caso di dati linearmente separabili un modello \emph{hard margin} potrebbe esibire cattive capacità di generalizzazione a causa di un margine negativamente influenzato da pochi dati erroneamente etichettati, \emph{outlier} o \emph{rumore}.
+Anche nel caso di dati linearmente separabili un modello \emph{hard margin} potrebbe esibire cattive capacità di generalizzazione a causa di un margine negativamente influenzato da pochi dati erroneamente etichettati, \emph{outlier} o rumore.
 Si riportano due esempi di questi scenari in~\Cref{fig:svc:softmargin:casi_che_hardmargin_non_risolve}.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{img/casi_dove_hardmargin_va_male_o_non_va.pdf}
-    \caption{A sinistra un esempio di dataset non linearmente separabile, non risolvibile con il modello \emph{hard margin}. A destra un caso linearmente separabile la cui soluzione \emph{hard margin} è fortemente influenzata da un \emph{outlier}. I dati con segno ``X'' sono erroneamente etichettati.}
+    \caption{A sinistra un esempio di dataset non linearmente separabile, non risolvibile con il modello \emph{hard margin}. A destra un caso linearmente separabile la cui soluzione \emph{hard margin} (linea continua) è fortemente influenzata da un singolo \emph{outlier}. La linea tratteggiata indica la superficie di separazione ideale.
+    I dati con segno ``X'' sono erroneamente etichettati.}
     \label{fig:svc:softmargin:casi_che_hardmargin_non_risolve}
 \end{figure}
 Per generalizzare il modello \emph{support vector classifier} e renderlo tollerante ad errori di classificazione, si riformula il problema di ottimizzazione in~\Cref{eq:svc:hardmargin:primal}, introducendo $m$ variabili di \emph{slack}/scarto $\xi_i \geq 0 \quad i=1,...,m$, una per ogni dato di addestramento. 
 Ogni valore $\xi_i$ sarà proporzionale alla distanza tra $\Vec{x}_i$ erroneamente classificato e la superficie di separazione. 
-La variabile $\xi_i$ sarà nulla per ogni $\Vec{x}_i$ correttamente classificato. Resta da definire come utilizzare le variabili di \emph{slack} per penalizzare la scelta di dati erroneamente classificati. 
+La variabile $\xi_i$ sarà nulla per ogni $\Vec{x}_i$ correttamente classificato. Resta da definire come utilizzare le variabili di scarto per penalizzare la scelta di dati erroneamente classificati. 
 In generale si definisce il problema primale
 \begin{equation}
 \begin{aligned}
@@ -295,9 +267,10 @@ In generale si definisce il problema primale
 &               && \xi_i \geq 0,                 &&  i=1,\dots,m.\\
 \end{aligned}
 \end{equation}
-Il parametro $C$, fissato a priori, determina il grado di tolleranza agli \emph{outlier}, bilanciando la funzione obiettivo originale con la penalità introdotta dalle variabili di \emph{slack}.
+Il parametro $C$, fissato a priori, determina il grado di tolleranza agli \emph{outlier}, bilanciando la funzione obiettivo originale con la penalità introdotta dalle variabili di scarto.
 %
-Il valore di $p$ è scelto tra $p=1$ (L1-SVC) e $p=2$ (L2-SVC). Viene qui considerata la formulazione L1-SVC:
+Il valore di $p$ è scelto tra $p=1$ (L1-SVC) e $p=2$ (L2-SVC), perché così facendo si ottiene una funzione obiettivo al più quadratica. 
+Viene qui considerata la formulazione L1-SVC:
 \begin{equation}
 \label{eq:svc:softmargin:primal}
 \begin{aligned}
@@ -445,7 +418,7 @@ Considerando per esempio i dati mostrati in~\Cref{fig:kerneltrick:non_lin_sep}, 
 %     \label{fig:kerneltrick:visualized}
 % \end{figure}
 
-In generale, si vorrebbero mappare i dati di addestramento dallo spazio originale $\mathcal{X}$ ad uno spazio delle \emph{feature} $\mathcal{H}$ di dimensioni maggiori, potenzialmente infinite, usando una funzione
+In generale, si vorrebbero trasformare i dati di addestramento dallo spazio originale $\mathcal{X}$ ad uno spazio delle \emph{feature} $\mathcal{H}$ di dimensioni maggiori, potenzialmente infinite, usando una funzione
 \begin{equation}
 \label{eq:generic_kernel_mapping}
 \Phi(x_i) : \mathcal{X} \rightarrow \mathcal{H}
@@ -519,11 +492,11 @@ Per trovare un valore di $C$ soddisfacente, raggiungendo un buon compromesso tra
 
 \section{Limitazioni}\label{sec:svc_limiti}
 I \emph{support vector classifier} presentano alcune limitazioni di cui serve tener conto. 
-Sono modelli suscettibili alla presenza di \emph{outlier}, intesi come dati erroneamente classificati o rumore. L'approccio \emph{soft-margin} consente di trattare anche problemi di questo tipo, ma la soluzione trovata potrebbe comunque subire (in misura variabile) l'effetto degli \emph{outlier}, dato che ognuno di questi punti diventerà un vettore di supporto con una relativa variabile di \emph{slack} che influirà sul valore della funzione obiettivo. 
+Sono modelli suscettibili alla presenza di \emph{outlier}, intesi come dati erroneamente classificati o rumore. L'approccio \emph{soft-margin} consente di trattare anche problemi di questo tipo, ma la soluzione trovata potrebbe comunque subire (in misura variabile) l'effetto degli \emph{outlier}, dato che ognuno di questi punti diventerà un vettore di supporto con una relativa variabile di scarto che influirà sul valore della funzione obiettivo. 
 Di conseguenza, i modelli SVC addestrati su dataset con rumore hanno in genere performance peggiori rispetto ad altri tipi di modelli pensati specificatamente per dati con molti outlier, per esempio approcci chiamati \emph{robusti} \cite{2019_robust_classification}.
 La presenza di rumore nel dataset è comunque un problema comune a tutti i modelli di apprendimento automatico e non riguarda solo i modelli \emph{support vector machine}.
 
-Una seconda limitazione riguarda la scalabilità. La procedura di addestramento considera tutti i dati disponibili e risulta quindi troppo costosa da eseguire su grandi quantità di dati, o su dati con un alto numero di feature, pur utilizzando un algoritmo di ottimizzazione numerica efficiente, come \emph{sequential minimal optimization} \cite{SMO}.
+Una seconda limitazione riguarda la scalabilità. La procedura di addestramento considera tutti i dati disponibili e risulta quindi troppo costosa da eseguire su grandi quantità di dati, o su dati con un alto numero di attributi, pur utilizzando un algoritmo di ottimizzazione numerica efficiente, come \emph{sequential minimal optimization} \cite{SMO}.
 
 Una terza limitazione riguarda la selezione dei parametri di addestramento: il costo $C$ e la funzione \emph{kernel}. La scelta ottimale di questi valori richiede in genere molteplici esecuzioni dell'algoritmo di addestramento, moltiplicando i tempi necessari.
 

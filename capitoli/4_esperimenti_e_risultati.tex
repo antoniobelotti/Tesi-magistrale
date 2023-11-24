@@ -41,7 +41,7 @@ Per decidere l'etichetta di un punto sono state utilizzate due tipologie di funz
     \begin{equation}\label{eq:sinusoid_dataset_lf}
     lf(\Vec{x}) = \sign\left(\frac{1}{(1 + \exp(-\beta(x_1 - 0.5)) + \rho \sin(2\pi\theta x_1)} - x2\right).
     \end{equation}
-    Questa funzione di etichettatura è utilizzata solo per dati in spazi con due dimensioni. La~\cref{fig:sinusoid_dataset} mostra alcuni esempi di dataset e funzioni di etichettatura al variare dei parametri.
+    Questa funzione di etichettatura è utilizzata solo per dati in spazi con due dimensioni. La~\Cref{fig:sinusoid_dataset} mostra alcuni esempi di dataset e funzioni di etichettatura al variare dei parametri.
 
     \item \textbf{Funzione paraboloide} Fissati i parametri $\alpha, x_\text{shift}, y_\text{shift}$, per un vettore $\Vec{x}=\{x_1, \dots, x_n\} \in \mathrm{R}^n$, l'etichetta $y$ è calcolata con la funzione
     \begin{equation}\label{eq:pacman_dataset_lf}
@@ -157,16 +157,168 @@ Si riportano in~\Cref{tab:uci_datasets} le caratteristiche dei dataset utilizzat
 
 
 \section{Impostazione esperimenti}
+A prescindere dai dataset utilizzati, sono state utilizzate due strategie leggermente diverse per eseguire gli esperimenti; si descrivono nei prossimi paragrafi.
+
+\subsection{Strategia 1}
+Il funzionamento di questa strategia è descritto dall'~\Cref{alg:esperimenti_1}.
+\begin{algorithm}
+    \SetAlgoLined
+    \KwData{$ds$ dataset}
+    %\KwResult{}
+    $FM \gets$ seleziona il miglior modello senza imporre nessun vincolo di budget\;
+    $FB \gets$ numero di vettori di supporto del modello $FM$\;
+    salva parametri e dettagli di $FM$\;
+    \For{$p\gets0.3$ \KwTo $0.9$ \KwBy $0.1$}{
+        $B\gets p*FB$\;
+        $M \gets$ seleziona il miglior modello con $\text{budget}=B$\;
+        salva parametri e dettagli di $M$\;
+    }
+\caption{Pseudocodice funzionamento esperimenti sullo stesso dataset e con variazione di budget in funzione del numero di vettori di supporto di un modello classico addestrato sempre sullo stesso dataset.}
+\label{alg:esperimenti_1}
+\end{algorithm}
+
+Per prima cosa si addestra un modello SVM tradizionale senza nessun vincolo sul numero di vettori di supporto. Chiamiamo questo modello $FM$ e chiamiamo $FB$ il numero di vettori di supporto di $FM$.
+In seguito, si addestrano una serie di modelli con un \emph{budget} pari ad una frazione di $FB$.
+Per ognuno di questi modelli il \emph{budget} è espresso come $B=p*FM$, dove
+\begin{equation*}
+    p\in\{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9\}.
+\end{equation*}
+
+Così facendo, è possibile misurare l'accuratezza sui dati di \emph{test} al diminuire del \emph{budget} e paragonarla all'accuratezza del corrispettivo modello classico addestrato sullo stesso dataset.
+Per ogni modello, si definisce \emph{score ratio} la quantità
+\begin{equation*}
+    \text{score ratio} = \frac{\text{accuratezza su dati di test del modello con vincolo sul budget}}{\text{accuratezza su dati di test del corrispettivo modello senza budget}}.
+\end{equation*}
+
+Con questi esperimenti è possibile ottenere delle indicazioni su quanto sia possibile ridurre il budget senza penalizzare troppo le \emph{performance}, limitatamente ai dataset considerati e in rapporto alla controparte senza vincolo sul budget.
+
+Per mitigare un eventuale \emph{bias} dovuto alla casualità nella generazione del dataset, si è deciso di generare tre dataset per ogni gruppo di parametri ma utilizzando però un seme per ognuno diverso.
+In generale quindi la procedura completa è descritta nell'~\Cref{alg:esperimenti_2}.
+\begin{algorithm}
+    \SetAlgoLined
+    \KwData{parametri dataset $\gets$ le varie combinazioni di parametri per generare dataset.}
+    \For{params \KwIn \text{parametri dataset}}{
+        \For{$s \gets \text{estrai nuovo seme}$}{
+            $ds\gets$ genera dataset con l'~\Cref{alg:generazione_dataset_sintetici} usando $params$ e $s$\;
+            esegui l'~\Cref{alg:esperimenti_1} su $ds$\;           
+        }
+    }
+\caption{Pseudocodice esperimenti con ripetizione della generazione dei dataset}
+\label{alg:esperimenti_2}
+\end{algorithm}
+
+\subsection{Strategia 2}
+Un secondo approccio per eseguire gli esperimenti su un certo dataset consiste nell'esprimere il budget in funzione alla dimensione del dataset invece che in funzione al numero di vettori di supporto di un modello classico.
+Questa strategia è descritta nell'~\Cref{alg:esperimenti_3}.
+\begin{algorithm}
+    \SetAlgoLined
+    \KwData{$ds$ dataset}
+    %\KwResult{}
+    $m \gets |ds|$
+    \For{$p$ \KwIn $\{0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2\}$}{
+        $B\gets pm$\;
+        $M \gets$ seleziona il miglior modello con $\text{budget}=B$\;
+        salva parametri e dettagli di $M$\;
+    }
+\caption{Pseudocodice funzionamento esperimenti sullo stesso dataset e con variazione di budget in funzione alla dimensione del dataset.}
+\label{alg:esperimenti_3}
+\end{algorithm}
+
+Utilizzando gli stessi dataset sintetici degli esperimenti precedenti, si esprime il budget come $B=pm$, dove $m$ è il numero di elementi nel dataset e dove
+\begin{equation*}
+    p\in\{0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2\}.
+\end{equation*}
+Così facendo possiamo verificare quanto stringente possa essere il \emph{budget} imposto, anche utilizzando percentuali molto basse ($1\%$), senza essere vincolati al numero di vettori di supporto di un modello classico.
+Gli obiettivi per questo tipo di esperimenti sono di valutare quanto stringete possa essere il budget, e confermare se possibile i risultati ottenuti con quantità di budget simili ottenute negli altri esperimenti.
+
+Per gli esperimenti effettuati con questa strategia, i dataset sintetici sono stati generati una sola volta con un solo seme per ogni configurazione di parametri.
+
+\subsection{Selezione e valutazione modelli}
+Ogni dataset è generato con un insieme di \emph{test} non modificabile.
+Ogni modello è selezionato utilizzando \emph{5-fold cross validation grid search} sul dati di addestramento, con la griglia di parametri descritta in~\Cref{tab:gridsearch_2d}.
+\begin{table}
+    \centering
+    \begin{tabular}{cccc}
+        \toprule
+        $C$ & \emph{Kernel} & $\gamma$ & d \\
+        \midrule
+        \multirow{3}{*}{[0.01, 0.1, 1, 10]} & Gaussiano   & [0.0001, 0.001, 0.01, 0.1, 1, 10]   & /\\
+                                            \cline{2-4}
+                                            & Polinomiale   & / & [2, 5, 10] \\
+                                            \cline{2-4}
+                                            & Lineare       & / & / \\
+        \bottomrule
+    \end{tabular}
+    \caption{Parametri \emph{grid search} per gli esperimenti su dataset bidimensionali.}
+    \label{tab:gridsearch_2d}
+\end{table}
+
+\begin{figure}
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/3.pdf}
+    \end{subfigure}%
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/4.pdf}
+    \end{subfigure}%
+    %
+    \hfill
+    %
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/8.pdf}
+    \end{subfigure}%
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/9.pdf}
+    \end{subfigure}%
+    %
+    \hfill
+    %
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/10.pdf}
+    \end{subfigure}%
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/12.pdf}
+    \end{subfigure}%
+     %
+    \hfill
+    %
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/13.pdf}
+    \end{subfigure}%
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/14.pdf}
+    \end{subfigure}%
+     %
+    \hfill
+    %
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/2d/15.pdf}
+    \end{subfigure}%
+    \caption{Risultati degli esperimenti su dataset sintetici dove il budget è espresso in funzione di un modello classico. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici al centro indica l'accuratezza sui dati di \emph{test} in rapporto all'accuratezza del modello senza vincolo sul \emph{budget} (\emph{optimal} si riferisce allo stato del solver gurobi); ognuno dei grafici a destra rappresenta il dataset utilizzato con le rispettive misure di ``difficoltà''.}
+\label{fig:risultati_2d}
+\end{figure}
+
+
 In generale ogni esperimento effettuato sul metodo proposto consiste nel selezionare il miglior modello per un dato dataset al variare di valori di \emph{budget}.
 Con miglior modello, nel resto di questo capitolo, si intende il miglior modello selezionato da \emph{5-fold cross validation grid search} valutando la metrica accuratezza. 
 
 Per cercare di ridurre il carico computazionale, gli esperimenti effettuati utilizzando il modello \emph{budgeted SVC} utilizzano una matrice \emph{kernel} pre-calcolata; le implementazioni di altri metodi presenti in letteratura utilizzati come confronto, invece, calcolano i valori di \emph{kernel} durante l'addestramento.
 
+\subsection{Ambiente di esecuzione}
 Tutti gli esperimenti sono stati eseguiti su un server con CPU Intel(R) Xeon(R) W-1250P CPU @ 4.10GHz e con 31GB di ram. Il linguaggio di programmazione utilizzato è Python 3.10.10 ed è stato utilizzato il risolutore Gurobi 10.0.1~\cite{gurobi}.
+
 
 \section{Esperimenti su dataset sintetici 2D}\label{sec:exp:synth_2d}
 Si riportano in questo paragrafo gli esperimenti effettuati sui dataset sintetici generati con le configurazioni di parametri riportate nelle~\Cref{tab:parametri_ds_sin,tab:parametri_ds_pacman}.
-Per questi dataset, a prescindere dal resto dei parametri, sono stati generati 1000 punti totali, di cui 700 per l'addestramento e 300 per la fase di \emph{test}. Il seme utilizzato ha valore $42$.
+Per questi dataset, a prescindere dal resto dei parametri, sono stati generati 1000 punti totali, di cui 700 per l'addestramento e 300 per la fase di \emph{test}.
 \begin{table}
     \centering
     \begin{tabular}{ccc}
@@ -207,173 +359,18 @@ Per questi dataset, a prescindere dal resto dei parametri, sono stati generati 1
     \label{tab:parametri_ds_pacman}
 \end{table}
 
-\subsubsection{Budget in funzione del modello classico}
-Una parte consistente degli esperimenti è stata eseguita seguendo la procedura descritta nell'~\Cref{alg:esperimenti_1}.
-Per prima cosa si addestra un modello SVM tradizionale senza nessun vincolo sul numero di vettori di supporto.
-In seguito si addestrano una serie di modelli con un \emph{budget} pari ad una frazione dei vettori di supporto del modello classico addestrato al passo precedente.
-\begin{algorithm}
-    \SetAlgoLined
-    \KwData{$ds$ dataset}
-    %\KwResult{}
-    $FM \gets$ seleziona il miglior modello senza imporre nessun vincolo di budget\;
-    $FB \gets$ numero di vettori di supporto del modello $FM$\;
-    salva parametri e dettagli di $FM$\;
-    \For{$p\gets0.3$ \KwTo $0.9$ \KwBy $0.1$}{
-        $B\gets p*FB$\;
-        $M \gets$ seleziona il miglior modello con $\text{budget}=B$\;
-        salva parametri e dettagli di $M$\;
-    }
-\caption{Pseudocodice esperimenti sullo stesso dataset ma con budget in funzione del numero di vettori di supporto del modello classico.}
-\label{alg:esperimenti_1}
-\end{algorithm}
-L'obiettivo di questo tipo di esperimenti è quello di analizzare l'accuratezza sui dati di \emph{test} al diminuire del \emph{budget}.
-Il \emph{budget} è espresso come $B=p*FM$, dove $FM$ è il numero di vettori di supporto di un modello addestrato senza vincolo sul \emph{budget} e dove
-\begin{equation*}
-    p\in\{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9\}.
-\end{equation*}
-
-Con questi esperimenti è possibile ottenere delle indicazioni su quanto sia possibile ridurre il budget senza penalizzare troppo le \emph{performance}, limitatamente ai dataset considerati e in rapporto alla controparte senza vincolo sul budget.
-
-Per avere un risultato più robusto, mitigando un eventuale \emph{bias} introdotto dalla selezione casuale di elementi del dataset, si è deciso di generare 3 dataset con gli stessi parametri utilizzando però un seme diverso per la selezione casuale.
-In generale quindi la procedura completa è descritta nell'~\Cref{alg:esperimenti_2}.
-\begin{algorithm}
-    \SetAlgoLined
-    \For{params \KwIn \text{parametri dataset}}{
-        \For{$s \gets \text{estrai nuovo seme}$}{
-            $ds\gets$ genera dataset con l'~\Cref{alg:generazione_dataset_sintetici} usando $params$ e $s$\;
-            esegui l'~\Cref{alg:esperimenti_1} su $ds$\;           
-        }
-    }
-\caption{Pseudocodice esperimenti con ripetizione della generazione dei dataset}
-\label{alg:esperimenti_2}
-\end{algorithm}
-
-Ogni modello è selezionato con \emph{5-fold cross validation grid search} utilizzando i parametri descritti in~\Cref{tab:gridsearch_2d}.
-\begin{table}
-    \centering
-    \begin{tabular}{cccc}
-        \toprule
-        $C$ & \emph{Kernel} & $\gamma$ & d \\
-        \midrule
-        \multirow{3}{*}{[0.01, 0.1, 1, 10]} & Gaussiano   & [0.0001, 0.001, 0.01, 0.1, 1, 10]   & /\\
-                                            \cline{2-4}
-                                            & Polinomiale   & / & [2, 5, 10] \\
-                                            \cline{2-4}
-                                            & Lineare       & / & / \\
-        \bottomrule
-    \end{tabular}
-    \caption{Parametri \emph{grid search} per gli esperimenti su dataset bidimensionali.}
-    \label{tab:gridsearch_2d}
-\end{table}
-
-Nelle~\Cref{fig:risultati_2d_1,fig:risultati_2d_2} si riportano dei grafici per analizzare l'accuratezza ottenuta sui dati di \emph{test} sia in termini assoluti che in rapporto con l'accuratezza del modello senza vincolo sul \emph{budget}.
-Per un modello, si definisce \emph{score ratio} la quantità
-\begin{equation*}
-    \text{score ratio} = \frac{\text{accuratezza su dati di test del modello con vincolo sul budget}}{\text{accuratezza su dati di test del modello senza budget}}.
-\end{equation*}
-\begin{figure}
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/1.pdf}
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/2.pdf}
-    \end{subfigure}%
-    %
-    \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/3.pdf}
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/4.pdf}
-    \end{subfigure}%
-    %
-    \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/5.pdf}
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/6.pdf}
-    \end{subfigure}%
-    %
-    \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/7.pdf}
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/8.pdf}
-    \end{subfigure}%
-
-\caption{Risultati degli esperimenti su dataset sintetici dove il budget è espresso in funzione di un modello classico. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici al centro indica l'accuratezza sui dati di \emph{test} in rapporto all'accuratezza del modello senza vincolo sul \emph{budget} (\emph{optimal} si riferisce allo stato del solver gurobi); ognuno dei grafici a destra rappresenta il dataset utilizzato con le rispettive misure di ``difficoltà''.}
-\label{fig:risultati_2d_1}
-\end{figure}
-\begin{figure}
-\begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/9.pdf}
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/10.pdf}
-    \end{subfigure}%
-     %
-    \hfill
-    %
-     \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/11.pdf}
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/12.pdf}
-    \end{subfigure}%
-     %
-    \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/13.pdf}
-    \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/14.pdf}
-    \end{subfigure}%
-     %
-    \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/15.pdf}
-    \end{subfigure}%
-    \caption{Risultati degli esperimenti su dataset sintetici dove il budget è espresso in funzione di un modello classico. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici al centro indica l'accuratezza sui dati di \emph{test} in rapporto all'accuratezza del modello senza vincolo sul \emph{budget} (\emph{optimal} si riferisce allo stato del solver gurobi); ognuno dei grafici a destra rappresenta il dataset utilizzato con le rispettive misure di ``difficoltà''.}
-\label{fig:risultati_2d_2}
-\end{figure}
-
+\subsubsection{Risultati ottenuti utilizzando la strategia 1}
 Dai risultati ottenuti è possibile notare come per dataset ``semplici'', o con una funzione di etichettatura complessa ma ben approssimabile da una superficie lineare, il metodo proposto risulta efficace, portando ad una riduzione significativa del numero di vettori di supporto senza pagare troppo in termini di accuratezza.
 In altri casi, invece, con dataset non necessariamente più difficili secondo le metriche F1 e F1v, le \emph{performance} peggiorano significativamente in relazione alla riduzione di vettori di supporto. In questi casi si nota anche un'alta variabilità nei risultati su dataset generati con stessi parametri ma con seme diverso.
+
+Nelle~\Cref{fig:risultati_2d} si riportano dei grafici per analizzare l'accuratezza ottenuta sui dati di \emph{test} sia in termini assoluti che in rapporto con l'accuratezza del modello senza vincolo sul \emph{budget} relativamente ai dataset più significativi.
+Per alcuni dei dataset generati, in particolare con la funzione paraboloide, i risultati ottenuti sono simili, con accuratezza che non diminuisce al diminuire del budget.
+
 % magari full_budget partiva già con "pochi" sv e ridurli porta ad accuracy molto più basse... ma non so
 
 Si può anche notare come in alcuni casi il numero di vettori di supporto di un modello tradizionale senza vincolo sia molto alto in confronto alla dimensione del dataset.
-**tabella che riporta il numero di vettori di supporto dei modelli full\_budget (?)**
 
-\subsubsection{Budget in funzione della dimensione del dataset}
-Un secondo approccio per eseguire gli esperimenti consiste nell'esprimere il budget in funzione della dimensione del dataset invece che in funzione di un modello senza vincolo sul budget.
-Utilizzando gli stessi dataset sintetici degli esperimenti precedenti, si esprime il budget come $B=pm$, dove $m$ è il numero di elementi nel dataset e dove
-\begin{equation*}
-    p\in\{0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2\}.
-\end{equation*}
-Così facendo possiamo verificare quanto stringente possa essere il \emph{budget} imposto, anche utilizzando percentuali molto basse ($1\%$).
-Per questi esperimenti i dataset sono stati generati una sola volta con un solo seme per ogni configurazione di parametri.
+\subsubsection{Risultati ottenuti utilizzando la strategia 2}
 Nelle~\Cref{fig:2d_v2_1,fig:2d_v2_2} si riporta l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget} per ogni dataset.
 \begin{figure}
     \begin{subfigure}{.5\textwidth}
@@ -467,32 +464,32 @@ Per dataset di fatto linearmente separabili la riduzione di budget può essere m
 
 %\subsection{Esperimenti su dataset con rumore}
 
-\section{Esperimenti su dataset sintetici 3D}\label{sec:exp:synth_3d}
-Una piccola parte degli esperimenti è stata effettuata su dataset in 3 dimensioni con 5600 dati di addestramento e 2400 di test.
-La strategia utilizzata è quella di impostare il \emph{budegt} in funzione del numero di vettori di supporto di un modello classico. 
-In~\Cref{fig:3d_exp} si possono vedere i risultati ottenuti e i dataset utilizzati.
-\begin{figure}
-    \begin{subfigure}{\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/3d/1.pdf}
-    \end{subfigure}%
-    \hfill
-    \begin{subfigure}{\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/3d/2.pdf}
-    \end{subfigure}%
-    \hfill
-    \begin{subfigure}{\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/3d/3.pdf}
-    \end{subfigure}%
-\caption{Esperimenti su dataset sintetici 3D con variazione del budget rispetto ad un modello classico. A sinistra l'accuratezza sui dati di test al variare del budget; al centro lo ``score ratio'' al variare del budget; a destra il dataset ridotto a due dimensioni utilizzando \emph{principal component analysis}.}
-\label{fig:3d_exp}
-\end{figure}
-Per limitare la quantità di tempo e risorse richiesti per eseguire questo tipo di esperimenti sono stati utilizzati solamente 3 dataset.
+% \section{Esperimenti su dataset sintetici 3D}\label{sec:exp:synth_3d}
+% Una piccola parte degli esperimenti è stata effettuata su dataset in 3 dimensioni con 5600 dati di addestramento e 2400 di test.
+% La strategia utilizzata è quella di impostare il \emph{budegt} in funzione del numero di vettori di supporto di un modello classico. 
+% In~\Cref{fig:3d_exp} si possono vedere i risultati ottenuti e i dataset utilizzati.
+% \begin{figure}
+%     \begin{subfigure}{\textwidth}
+%         \centering
+%         \includegraphics[width=\textwidth]{img/3d/1.pdf}
+%     \end{subfigure}%
+%     \hfill
+%     \begin{subfigure}{\textwidth}
+%         \centering
+%         \includegraphics[width=\textwidth]{img/3d/2.pdf}
+%     \end{subfigure}%
+%     \hfill
+%     \begin{subfigure}{\textwidth}
+%         \centering
+%         \includegraphics[width=\textwidth]{img/3d/3.pdf}
+%     \end{subfigure}%
+% \caption{Esperimenti su dataset sintetici 3D con variazione del budget rispetto ad un modello classico. A sinistra l'accuratezza sui dati di test al variare del budget; al centro lo ``score ratio'' al variare del budget; a destra il dataset ridotto a due dimensioni utilizzando \emph{principal component analysis}.}
+% \label{fig:3d_exp}
+% \end{figure}
+% Per limitare la quantità di tempo e risorse richiesti per eseguire questo tipo di esperimenti sono stati utilizzati solamente 3 dataset.
 
-Dai risultati ottenuti possiamo comunque notare come restrizioni di budget significative risultino addirittura in migliori performance rispetto al modello nella formulazione classica. 
-Analizzando i modelli ottenuti però si nota come il numero di vettori di supporto nella formulazione classica sia molto elevato (5550, 5592, 5600), praticamente l'intero insieme di dati di addestramento.
+% Dai risultati ottenuti possiamo comunque notare come restrizioni di budget significative risultino addirittura in migliori performance rispetto al modello nella formulazione classica. 
+% Analizzando i modelli ottenuti però si nota come il numero di vettori di supporto nella formulazione classica sia molto elevato (5550, 5592, 5600), praticamente l'intero insieme di dati di addestramento.
 
 
 \section{Esperimenti su dataset di terze parti}\label{sec:exp:real_ds}
@@ -585,7 +582,7 @@ Nelle~\Cref{fig:comp_old_1,fig:comp_old_2} si possono vedere i valori di accurat
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/8.pdf}
     \end{subfigure}
-\caption{Esperimenti su dataset sintetici 2D con variazione del budget in funzione della dimensione del dataset, analogo ai risultati in~\Cref{fig:risultati_2d_1,fig:risultati_2d_2} ma con una curva ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
+\caption{Esperimenti su dataset sintetici 2D con variazione del budget in funzione della dimensione del dataset, analogo ai risultati in~\Cref{fig:risultati_2d} ma con una curva ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
 \label{fig:comp_old_1}
 \end{figure}   
 \begin{figure}
@@ -626,7 +623,7 @@ Nelle~\Cref{fig:comp_old_1,fig:comp_old_2} si possono vedere i valori di accurat
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/15.pdf}
     \end{subfigure}
-\caption{Esperimenti su dataset sintetici 2D con variazione del budget in funzione della dimensione del dataset, analogo ai risultati in~\Cref{fig:risultati_2d_1,fig:risultati_2d_2} ma con una curva ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
+\caption{Esperimenti su dataset sintetici 2D con variazione del budget in funzione della dimensione del dataset, analogo ai risultati in~\Cref{fig:risultati_2d} ma con una curva ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
 \label{fig:comp_old_2}
 \end{figure}   
 Nelle~\Cref{fig:comp_new_1,fig:comp_new_2} si possono vedere i valori di accuratezza ottenuti da questi metodi definendo il budget in funzione della dimensione del dataset e confrontati con i risultati ottenuti con \emph{budgeted SVC} e i dataset utilizzati.
@@ -672,7 +669,7 @@ Nelle~\Cref{fig:comp_new_1,fig:comp_new_2} si possono vedere i valori di accurat
         \centering
         \includegraphics[width=\textwidth]{img/comp_new/8.pdf}
     \end{subfigure}
-\caption{Esperimenti su dataset sintetici 2D con variazione del budget in funzione della dimensione del dataset, analogo ai risultati in~\Cref{fig:risultati_2d_1,fig:risultati_2d_2} ma con una curva ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
+\caption{Esperimenti su dataset sintetici 2D con variazione del budget in funzione della dimensione del dataset, analogo ai risultati in~\Cref{fig:risultati_2d} ma con una curva ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
 \label{fig:comp_new_1}
 \end{figure}   
 \begin{figure}
@@ -713,7 +710,7 @@ Nelle~\Cref{fig:comp_new_1,fig:comp_new_2} si possono vedere i valori di accurat
         \centering
         \includegraphics[width=\textwidth]{img/comp_new/15.pdf}
     \end{subfigure}
-\caption{Esperimenti su dataset sintetici 2D con variazione del budget in funzione della dimensione del dataset, analogo ai risultati in~\Cref{fig:risultati_2d_1,fig:risultati_2d_2} ma con una curva ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
+\caption{Esperimenti su dataset sintetici 2D con variazione del budget in funzione della dimensione del dataset, analogo ai risultati in~\Cref{fig:risultati_2d} ma con una curva ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
 \label{fig:comp_new_2}
 \end{figure}   
 
