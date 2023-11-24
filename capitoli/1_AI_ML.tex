@@ -194,7 +194,7 @@ La~\Cref{fig:kfoldcv} mostra graficamente un esempio delle suddivisioni effettua
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{img/kfoldCV.jpg}
-    \caption{Tratto da~\cite{model_evaluation}. Esempio di come \emph{5-fold cross validation} suddivide i dati di addestramento disponibili in 5 parti, utilizzandole tutte una volta come \emph{test}.}
+    \caption[Esempio \emph{5-fold cross-validation}.]{Tratto da~\cite{model_evaluation}. Esempio di come \emph{5-fold cross validation} suddivide i dati di addestramento disponibili in 5 parti, utilizzandole tutte una volta come \emph{test}.}
     \label{fig:kfoldcv}
 \end{figure}
 Si parla di \emph{stratified k-fold cross-validation} quando la procedura mantiene la proporzione delle etichette originali nel creare le diverse suddivisioni.
@@ -261,7 +261,7 @@ In~\Cref{fig:nested_cv} si riporta un illustrazione del funzionamento.
 \begin{figure}
     \centering
     \includegraphics[width=0.8\linewidth]{img/nested_cv.pdf}
-    \caption{Tratto da~\cite{model_evaluation}, esempio di \emph{nested cross-validation}.}
+    \caption[Esempio \emph{nested cross-validation}.]{Tratto da~\cite{model_evaluation}, esempio di \emph{nested cross-validation}.}
     \label{fig:nested_cv}
 \end{figure}
 
@@ -280,7 +280,7 @@ In~\Cref{fig:knn_example} si mostra un esempio di classificazione, con $K=3$.
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{img/KNN.pdf}
-    \caption{Esempio di applicazione della regola di classificazione KNN con $K=3$. I colori blu e rosso identificano le due possibili classi. Il punto color verde è il punto per cui predire la classe.
+    \caption[Esempio \emph{K-Nearest Neighbors}.]{Esempio di applicazione della regola di classificazione KNN con $K=3$. I colori blu e rosso identificano le due possibili classi. Il punto color verde è il punto per cui predire la classe.
     Il nuovo punto sarà predetto come appartenente alla classe rossa, perché la maggioranza dei dei tre punti a lui più vicini (evidenziati dai segmenti tratteggiati) appartiene a quella classe.}
     \label{fig:knn_example}
 \end{figure}
@@ -308,7 +308,7 @@ In questo algoritmo, la bontà di ogni decisione, o in altre parole il criterio 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{img/decision_tree.pdf}
-    \caption{Esempio semplificato di un possibile albero di decisione per il rischio di malattia cardiaca. I nodi rettangolari e i corrispettivi archi che collegano ai sotto-alberi identificano delle regole, in questo caso un semplice controllo sull'attributo con il nome del nodo. I nodi foglia ovali identificano il valore della predizione.}
+    \caption[Esempio albero di decisione.]{Esempio semplificato di un possibile albero di decisione per il rischio di malattia cardiaca. I nodi rettangolari e i corrispettivi archi che collegano ai sotto-alberi identificano delle regole, in questo caso un semplice controllo sull'attributo con il nome del nodo. I nodi foglia ovali identificano il valore della predizione.}
     \label{fig:decision_tree}
 \end{figure}
 Gli alberi decisionali sono modelli semplici e hanno il pregio di essere modelli \emph{white box}, ovvero sono noti i criteri per cui è eseguita una predizione.
@@ -331,7 +331,7 @@ In~\Cref{fig:random_forest} si mostra un esempio schematico di un \emph{ensemble
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{img/random_forest.pdf}
-    \caption{Esempio di \emph{random forest}. Il modello è composto da un insieme di alberi interni, ognuno addestrato su un diverso sottoinsieme di dati e di attributi. Un nuovo esempio da classificare, in questa figura il punto verde, viene classificato da ogni sotto-albero singolarmente, per poi produrre una predizione globale utilizzando una regola di aggregazione delle predizioni interne.}
+    \caption[Esempio \emph{random forest}.]{Esempio di \emph{random forest}. Il modello è composto da un insieme di alberi interni, ognuno addestrato su un diverso sottoinsieme di dati e di attributi. Un nuovo esempio da classificare, in questa figura il punto verde, viene classificato da ogni sotto-albero singolarmente, per poi produrre una predizione globale utilizzando una regola di aggregazione delle predizioni interne.}
     \label{fig:random_forest}
 \end{figure}
 
@@ -363,7 +363,7 @@ dove $w^{(1)},\dots,w^{(d)} \in \mathbb{R}$ sono chiamati pesi, $b \in \mathbb{R
 \begin{figure}
     \centering
     \includegraphics[width=0.3\linewidth]{img/perceptron.pdf}
-    \caption{Esempio di percettrone. I simboli $x^{(1)},x^{(2)},x^{(3)}$ identificano gli input, mentre $\hat{y}$ denota l'output del modello. I parametri $w^{(1)},w^{(2)},w^{(3)}$ sono i pesi, mentre $b$ è la soglia opzionale e $\theta$ è la funzione di attivazione.}
+    \caption[Esempio percettrone.]{Esempio di percettrone. I simboli $x^{(1)},x^{(2)},x^{(3)}$ identificano gli input, mentre $\hat{y}$ denota l'output del modello. I parametri $w^{(1)},w^{(2)},w^{(3)}$ sono i pesi, mentre $b$ è la soglia opzionale e $\theta$ è la funzione di attivazione.}
     \label{fig:perceptron}
 \end{figure}
 Il percettrone è un modello semplice, in grado di calcolare funzioni all'interno di una classe piuttosto limitata e quindi non particolarmente espressiva.
@@ -376,7 +376,7 @@ A seconda del numero di strati nascosti è possibile suddividere questi modeli i
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{img/nn.pdf}
-    \caption{Esempio di un semplice percettrone multi-strato con tre neuroni di input e due di output.}
+    \caption[Esempio percettrone multi-strato.]{Esempio di un semplice percettrone multi-strato con tre neuroni di input e due di output.}
     \label{fig:NN}
 \end{figure}
 Le reti neurali descritte fino a ora sono chiamate \emph{feed-forward} perché i dati in fase di predizione fluiscono dallo strato di \emph{input} fino a quello di \emph{output}.
@@ -436,6 +436,6 @@ In~\Cref{fig:esempio_underfitting_overfitting} si visualizza un esempio dei vari
         \includegraphics[width=\textwidth]{img/under_over_fitting_4.pdf}
         \caption{Esempio di una possibile superficie di separazione con buone capacità di generalizzazione.}
     \end{subfigure}%
-\caption{Esempio di \emph{underfitting} e \emph{overfitting} su un \emph{dataset} per un problema di classificazione binaria.}
+\caption[Esempio di \emph{underfitting} e \emph{overfitting}.]{Esempio di \emph{underfitting} e \emph{overfitting} su un \emph{dataset} per un problema di classificazione binaria.}
 \label{fig:esempio_underfitting_overfitting}
 \end{figure}

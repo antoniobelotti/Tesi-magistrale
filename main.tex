@@ -76,6 +76,13 @@ Algoritmi di classificazione basati su vettori di supporto per la produzione di 
 
 \usepackage{setspace}  
 
+\usepackage[toc,page]{appendix}
+\addto\captionsitalian{%
+   \renewcommand{\appendixtocname}{Appendici}%
+   \renewcommand{\appendixpagename}{Appendici}%
+}
+
+
 % 
 % norma di un vettore
 \newcommand{\norm}[1]{\|#1\|}
@@ -124,6 +131,9 @@ Algoritmi di classificazione basati su vettori di supporto per la produzione di 
 \bibliographystyle{unsrt}
 \bibliography{bibliografia}
 \addcontentsline{toc}{chapter}{Bibliografia}
+
+
+\input{capitoli/appendici}
 
 \end{document}
 

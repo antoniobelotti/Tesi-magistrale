@@ -57,7 +57,7 @@ L'insieme $\mathcal{X}$ è linearmente separabile se esistono un vettore $\Vec{w
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{img/dati_linearmente_separabili.pdf}
-    \caption{Esempio di dati per un problema di classificazione binaria in cui le classi (identificate dai due colori rosso e blu) sono linearmente separabili. Sono illustrate alcune delle possibili rette in grado di separare correttamente tutti gli esempi della stessa classe. }
+    \caption[Esempio problema classificazione binaria linearmente separabile.]{Esempio di dati per un problema di classificazione binaria in cui le classi (identificate dai due colori rosso e blu) sono linearmente separabili. Sono illustrate alcune delle possibili rette in grado di separare correttamente tutti gli esempi della stessa classe. }
     \label{fig:dati_linearmente_separabili}
 \end{figure}
 Con $\Vec{w}$ e $b$ noti, si definisce il classificatore 
@@ -102,7 +102,7 @@ I punti $\Vec{x}_i$ per cui $\Vec{w}^*\Vec{x}_i + b^* = \pm 1$ sono chiamati \em
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{img/margine_separazione.pdf}
-    \caption{Esempio di superficie di separazione con margine massimale per gli stessi dati utilizzati in~\Cref{fig:dati_linearmente_separabili}. I punti cerchiati sono vettori di supporto. $H0$ è la superficie di separazione, mentre $H1$ e $H2$ sono le superfici su cui giacciono i vettori di supporto. Il margine è $M=2d$.}
+    \caption[Esempio \emph{maximal margin classifier}.]{Esempio di superficie di separazione con margine massimale per gli stessi dati utilizzati in~\Cref{fig:dati_linearmente_separabili}. I punti cerchiati sono vettori di supporto. $H0$ è la superficie di separazione, mentre $H1$ e $H2$ sono le superfici su cui giacciono i vettori di supporto. Il margine è $M=2d$.}
     \label{fig:optimal_separation_margin}
 \end{figure}
 %
@@ -252,7 +252,7 @@ Si riportano due esempi di questi scenari in~\Cref{fig:svc:softmargin:casi_che_h
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{img/casi_dove_hardmargin_va_male_o_non_va.pdf}
-    \caption{A sinistra un esempio di dataset non linearmente separabile, non risolvibile con il modello \emph{hard margin}. A destra un caso linearmente separabile la cui soluzione \emph{hard margin} (linea continua) è fortemente influenzata da un singolo \emph{outlier}. La linea tratteggiata indica la superficie di separazione ideale.
+    \caption[Esempio problemi non risolvibili con \emph{maximal margin classifier}.]{A sinistra un esempio di dataset non linearmente separabile, non risolvibile con il modello \emph{hard margin}. A destra un caso linearmente separabile la cui soluzione \emph{hard margin} (linea continua) è fortemente influenzata da un singolo \emph{outlier}. La linea tratteggiata indica la superficie di separazione ideale.
     I dati con segno ``X'' sono erroneamente etichettati.}
     \label{fig:svc:softmargin:casi_che_hardmargin_non_risolve}
 \end{figure}
@@ -285,7 +285,7 @@ Si riporta in~\Cref{fig:soft_margin} un esempio di modello \emph{soft margin} pe
 \begin{figure}
     \centering
     \includegraphics[width=.7\linewidth]{img/soft_margin.pdf}
-    \caption{Con la formulazione \emph{soft margin} si tollerano esempi dalla parte sbagliata della superficie di separazione ($\xi_i>1$) o troppo vicini alla superficie di separazione ($0<\xi_i<1$). I punti in questione sono rappresentati in figura con un segno ``X''.}
+    \caption[Esempio classificazione \emph{soft margin}.]{Con la formulazione \emph{soft margin} si tollerano esempi dalla parte sbagliata della superficie di separazione ($\xi_i>1$) o troppo vicini alla superficie di separazione ($0<\xi_i<1$). I punti in questione sono rappresentati in figura con un segno ``X''.}
     \label{fig:soft_margin}
 \end{figure}
 
@@ -402,7 +402,7 @@ Considerando per esempio i dati mostrati in~\Cref{fig:kerneltrick:non_lin_sep}, 
         \caption{I dati della~\Cref{fig:kerneltrick:non_lin_sep}, mappati nel nuovo spazio bidimensionale, sono linearmente separabili (per esempio dalla retta tratteggiata).}
         \label{fig:kerneltrick:visualized}
     \end{subfigure}%
-    \caption{Esempio di trasformazione per rendere un insieme di dati linearmente separabili in un nuovo spazio.}
+    \caption[Esempio trasformazione di dati in un nuovo spazio.]{Esempio di trasformazione per rendere un insieme di dati linearmente separabili in un nuovo spazio.}
 \end{figure}
 
 % \begin{figure}

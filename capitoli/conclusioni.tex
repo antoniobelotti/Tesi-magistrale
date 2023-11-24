@@ -1,14 +1,19 @@
 \chapter{Conclusioni e sviluppi futuri}
 \label{chap:conclusioni}
-In questa tesi è stato proposto un approccio per addestrare modelli SVC con un ristretto numero di vettori di supporto.
-Gli esperimenti effettuati su diversi dataset sintetici evidenzia come il metodo sia promettente:
+In questa tesi è stato proposto L'approccio \emph{budgeted SVC} per addestrare classificatori con un ristretto numero di vettori di supporto.
+Gli esperimenti effettuati su diversi \emph{dataset} sintetici evidenziano come il metodo sia promettente. 
+Le motivazioni sono esposte nell'elenco seguente.
 \begin{itemize}
-    \item Per alcuni dataset la riduzione in termini di spazio può essere significativa, con una riduzione in termini di accuratezza non significativa.
-    \item Per altri dataset la valutazione dell'approccio è più difficoltosa perché si evidenziano casi in cui la riduzione in spazio non intacca l'accuratezza e altri in cui invece la intacca significativamente.
-    \item Esprimendo il budget come percentuale della dimensione del dataset, si nota come valori tra il $5\%$ ed il $7\%$ possano essere delle buone scelte per risparmiare spazio senza sacrificare troppo in termini di efficacia.
+    \item Per alcuni \emph{dataset} facili, la riduzione in termini di spazio può essere significativa e non penalizzate in termini di accuratezza.
+    \item Per altri \emph{dataset} difficili, l'accuratezza subisce un peggioramento significativo al diminuire del \emph{budget}, fino al punto in cui per riduzioni importanti l'accuratezza ritorna ad essere buona.
+    \item Esprimendo il budget come percentuale della dimensione del \emph{dataset}, si nota come valori tra il $5\%$ ed il $7\%$ possano essere delle buone scelte per risparmiare spazio senza sacrificare troppo in termini di efficacia.
 \end{itemize}
 
-Gli esperimenti effettuati su dataset di terze parti confermano le osservazioni effettuate sui dataset sintetici. ..................
+Gli esperimenti effettuati su \emph{dataset} di terze parti sono anche più promettenti dei precedenti risultati:
+\begin{itemize}
+    \item utilizzando la strategia 1, tutti i modelli con \emph{budget} esibiscono la stessa accuratezza del corrispettivo modello classico;
+    \item utilizzando la strategia 2, si evidenzia come la perdita in accuratezza sia proporzionale alla riduzione di \emph{budget}.
+\end{itemize}
 
 
 Il confronto con altri metodi evidenzia come \emph{budgeted SVC}..................
@@ -16,10 +21,9 @@ Il confronto con altri metodi evidenzia come \emph{budgeted SVC}................
 
 Il lavoro iniziato in questa tesi potrebbe sicuramente essere sviluppato ulteriormente, cercando di espandere o migliorare alcuni aspetti, per esempio:
 \begin{itemize}
-    \item Si potrebbero utilizzare dataset sintetici di dimensione maggiore e/o dataset con un più alto numero di feature. Si potrebbero utilizzare ulteriori dataset di terze parti con caratteristiche diverse rispetto a quelli già considerati.
+    \item Si potrebbero utilizzare \emph{dataset} sintetici di dimensione maggiore e/o \emph{dataset} con un più alto numero di feature. Si potrebbero utilizzare ulteriori \emph{dataset} di terze parti con caratteristiche diverse rispetto a quelli già considerati.
     \item Si potrebbero proporre ulteriori indicazioni o dei criteri più solidi per come impostare dei valori di budget a priori, per esempio in base alle caratteristiche dei dati disponibili.
     \item Si potrebbero incorporare delle proposte presentate in letteratura, per esempio per limitare l'effetto del rumore o per rendere il problema trattabile con altri metodi risolutivi.
     \item Si potrebbe investigare un eventuale relazione tra \emph{budget} e rumore, per capire se una quantità molto stringente di \emph{budget} corrisponda ad una maggior robustezza rispetto a dati erroneamente etichettati.
-    \item ....
 \end{itemize}
 
