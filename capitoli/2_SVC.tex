@@ -478,8 +478,8 @@ L'introduzione del \emph{kernel trick} modifica il problema in~\Cref{eq:svc:soft
 %
 La predizione della classe di un nuovo esempio $\Vec{x}_\text{test}$ sarà ottenuta calcolando 
 \begin{align*}
-h(\Vec{x}_\text{test})  &= \sign(\Vec{w}^*\cdot\Phi(\vec{x}_{text}) +b^*) =\\
-                        &= \sign\left(\sum_{i\in S} \alpha_i^*y_i \Phi(\vec{x}_i) \cdot \Phi(\vec{x}_{text}) + b^*\right)=\\
+h(\Vec{x}_\text{test})  &= \sign(\Vec{w}^*\cdot\Phi(\vec{x}_{\text{test}}) +b^*) =\\
+                        &= \sign\left(\sum_{i\in S} \alpha_i^*y_i \Phi(\vec{x}_i) \cdot \Phi(\vec{x}_{\text{test}}) + b^*\right)=\\
                         &= \sign\left(\sum_{i \in S}\alpha_i^*y_iK(\Vec{x}_i, \Vec{x}_\text{test}) + b^*\right)
 \end{align*}
 
