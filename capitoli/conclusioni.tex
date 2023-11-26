@@ -1,12 +1,12 @@
 \chapter{Conclusioni e sviluppi futuri}
 \label{chap:conclusioni}
-In questa tesi è stato proposto L'approccio \emph{budgeted SVC} per addestrare classificatori con un ristretto numero di vettori di supporto.
+In questa tesi è stato proposto l'approccio \emph{budgeted SVC} per addestrare classificatori con un ristretto numero di vettori di supporto.
 Gli esperimenti effettuati su diversi \emph{dataset} sintetici evidenziano come il metodo sia promettente. 
 Le motivazioni sono esposte nell'elenco seguente.
 \begin{itemize}
     \item Per alcuni \emph{dataset} facili, la riduzione in termini di spazio può essere significativa e non penalizzate in termini di accuratezza.
-    \item Per altri \emph{dataset} difficili, l'accuratezza subisce un peggioramento significativo al diminuire del \emph{budget}, fino al punto in cui per riduzioni importanti l'accuratezza ritorna ad essere buona.
-    \item Esprimendo il budget come percentuale della dimensione del \emph{dataset}, si nota come valori tra il $5\%$ ed il $7\%$ possano essere delle buone scelte per risparmiare spazio senza sacrificare troppo in termini di efficacia.
+    \item Per altri \emph{dataset} difficili, l'accuratezza subisce un peggioramento significativo al diminuire del \emph{budget}, fino al punto in cui per riduzioni importanti l'accuratezza ritorna ad essere buona. Tuttavia, per i modelli peggiori le soluzioni ritornate dal risolutore non sono ottime.
+    \item Esprimendo il \emph{budget} come percentuale della dimensione del \emph{dataset}, si nota come valori tra il $5\%$ ed il $7\%$ possano essere delle buone scelte per risparmiare spazio senza sacrificare troppo in termini di efficacia.
 \end{itemize}
 
 Gli esperimenti effettuati su \emph{dataset} di terze parti sono anche più promettenti dei precedenti risultati:
@@ -15,15 +15,16 @@ Gli esperimenti effettuati su \emph{dataset} di terze parti sono anche più prom
     \item utilizzando la strategia 2, si evidenzia come la perdita in accuratezza sia proporzionale alla riduzione di \emph{budget}.
 \end{itemize}
 
+Il confronto con altri metodi evidenzia come \emph{budgeted SVC} sia in alcuni casi competitivo su \emph{dataset} semplici ma non lo sia invece su \emph{dataset} difficili.
+Gli altri due metodi considerati, NSSVM e BSGD SVM,  producono in genere modelli più accurati per valori di \emph{budget} minimi, tra l'$1\%$ e il $5\%$.
 
-Il confronto con altri metodi evidenzia come \emph{budgeted SVC}..................
+Per risparmiare ulteriore spazio nella memorizzazione di un modello SVC, anche nella formulazione classica, è stata proposta una procedura di memorizzazione compressa.
+Relativamente ai modelli prodotti, si evidenza come questa rappresentazione consenta in parecchi casi una riduzione significativa.
 
-
-Il lavoro iniziato in questa tesi potrebbe sicuramente essere sviluppato ulteriormente, cercando di espandere o migliorare alcuni aspetti, elencati di seguito.
+Nonostante i risultati ottenuti siano un buon punto di partenza, la formulazione \emph{budgeted SVC} potrebbe essere studiata ulteriormente, cercando di espandere, migliorare o chiarire alcuni aspetti, elencati di seguito.
 \begin{itemize}
     \item Si potrebbe verificare se la variabilità ottenuta su diversi \emph{dataset} generati con gli stessi parametri sia effettivamente dovuta al fatto che il risolutore non fornisca una soluzione ottima. 
-    \item Si potrebbero utilizzare \emph{dataset} sintetici di dimensione maggiore e/o \emph{dataset} con un più alto numero di feature. Si potrebbero utilizzare ulteriori \emph{dataset} di terze parti con caratteristiche diverse rispetto a quelli già considerati.
-    \item Si potrebbero proporre ulteriori indicazioni o dei criteri più solidi per come impostare dei valori di budget a priori, per esempio in base alle caratteristiche dei dati disponibili.
+    \item Si potrebbero utilizzare \emph{dataset} sintetici di dimensione maggiore e/o \emph{dataset} con un più alto numero di attributi. Si potrebbero utilizzare ulteriori \emph{dataset} di terze parti con caratteristiche diverse rispetto a quelli già considerati.
     \item Si potrebbero incorporare delle proposte presentate in letteratura, per esempio per limitare l'effetto del rumore o per rendere il problema trattabile con altri metodi risolutivi.
     \item Si potrebbe investigare un eventuale relazione tra \emph{budget} e rumore, per capire se una quantità molto stringente di \emph{budget} corrisponda ad una maggior robustezza rispetto a dati erroneamente etichettati.
 \end{itemize}
