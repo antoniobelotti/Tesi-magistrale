@@ -11,26 +11,30 @@ nel~\Cref{sec:comparazione_metodi} si confrontano i risultati ottenuti dall'appr
 \section{Dataset}\label{sec:exp:dataset}
 Per gli esperimenti descritti in questo capitolo sono state usate due tipologie di dataset. 
 La prima categoria è composta da \emph{dataset} sintetici, generati specificatamente per questo lavoro, mentre la seconda categoria è composta da alcuni \emph{dataset} di terze parti utilizzati in letteratura. 
-Le due tipologie presentano vantaggi e svantaggi. Nel primo caso risulta molto comodo poter modificare a piacimento le caratteristiche dei \emph{dataset}, per esempio per valutare algoritmi su \emph{dataset} di difficoltà crescente, oppure con quantità di rumore via via più grande.
+Le due tipologie presentano vantaggi e svantaggi. Nel primo caso risulta molto comodo poter modificare a piacimento le caratteristiche dei \emph{dataset}, per esempio per valutare algoritmi su \emph{dataset} di complessità crescente, oppure con quantità di rumore via via più grande.
+Con complessità di un \emph{dataset} si intende la difficoltà di risolvere il problema di classificare il \emph{dataset} stesso. Nel resto di questo di capitolo si useranno i termini \emph{difficoltà} e \emph{facilità} di un \emph{dataset} con questa accezione.
+Si definirà meglio questo concetto nel prossimo paragrafo.
 Lo svantaggio è che si potrebbero ottenere dei risultati poco significativi, perché ottenuti su dati generati \emph{ad hoc} e poco confrontabili con altri modelli. 
 Per questo motivo ha senso utilizzare anche dei \emph{dataset} di terze parti, possibilmente già utilizzati in altri lavori presenti in letteratura.
 
 \subsubsection{Metriche delle difficoltà di un dataset}\label{sec:metriche_dataset}
 Per avere a priori un'indicazione della difficoltà dei \emph{dataset} sintetici, intesa come difficoltà nel trovare una superficie di separazione soddisfacente, sono state considerate alcune metriche, in particolare F1 e F1v~\cite{ds_complexity}, descritte brevemente nell'elenco seguente.
 \begin{itemize}
-    \item \textbf{F1} è la sigla per la metrica \emph{Maximum Fisher’s discriminant ratio}. Questa metrica misura la sovrapposizione tra i vari attributi per ogni classe.
+    \item \textbf{F1}\footnote{Da notare che si tratta di una metrica differente rispetto all'omonima vista nel~\Cref{chap:AI_ML}.} è la sigla per la metrica \emph{Maximum Fisher’s discriminant ratio}. Questa metrica misura la sovrapposizione tra i vari attributi per ogni classe.
     % La metrica è calcolata come
     % \begin{equation*}
     %     F1=\frac{1}{1+\max_{j=1}^{d}r_{f_{j}}},
     % \end{equation*}
     % dove $r_{f_{j}}$ è il \emph{discriminant ratio} per l'attributo $j$.
-    Il valore di F1 è compreso nell'intervallo $(0,1]$. Più il valore è vicino a uno, più il \emph{dataset} è difficilmente classificabile, perché non esistono attributi in grado di separare le due classi. Al contrario, un valore vicino a zero indica la presenza di un attributo $f$ per cui esiste una superficie di separazione perpendicolare all'asse di $f$ in grado di separare equamente le classi delle etichette.
+    Il valore di F1 è compreso nell'intervallo $(0,1]$. Più il valore è vicino a uno, più il \emph{dataset} è difficilmente classificabile, perché non esistono attributi in grado di separare bene le due classi. Al contrario, un valore vicino a zero indica la presenza di un attributo $f$ per cui esiste una superficie di separazione perpendicolare all'asse di $f$ in grado di separare le classi.
     \item \textbf{F1v} è la sigla per la metrica \emph{Directional-vector Maximum Fisher’s Discriminant Ratio}. Quantifica quanto separabili siano due classi una volta proiettate su un vettore scelto per rendere i dati separabili.
     Anche il valore di F1v è compreso nell'intervallo $(0,1]$ e valori vicini a zero indicano dati facilmente separabili.    
     Si rimanda a~\cite{ds_complexity} per la definizione completa di F1v.
 \end{itemize}
 
 Dal punto di vista pratico, queste metriche sono state calcolate per ogni \emph{dataset} utilizzando la libreria Python problexity~\cite{problexity} (versione 0.5.6).
+
+Si considera \emph{difficile} un \emph{dataset} con valori elevati di F1 e F1v; si considera \emph{facile} un \emph{dataset} con valori bassi di F1 e F1v.
 
 
 \subsection{Dataset sintetici}
@@ -41,14 +45,15 @@ Per decidere l'etichetta di un punto sono state utilizzate due tipologie di funz
     \begin{equation}\label{eq:sinusoid_dataset_lf}
     \textrm{lfsin}(\Vec{x}) = \sign\left(\frac{1}{(1 + \exp(-\beta(x^{(1)} - 0.5)) + \rho \sin(2\pi\theta x^{(1)})} - x^{(2)}\right).
     \end{equation}
-    Questa funzione di etichettatura è utilizzata solo per dati con due attributi. La~\Cref{fig:sinusoid_dataset} mostra alcuni esempi di \emph{dataset} bidimensionali e funzioni di etichettatura al variare dei parametri.
+    Questa funzione di etichettamento è utilizzata solo per dati con due attributi. La~\Cref{fig:sinusoid_dataset} mostra alcuni esempi di \emph{dataset} bidimensionali e funzioni di etichettamento al variare dei parametri.
 
     \item \textbf{Funzione paraboloide} Fissati i parametri $\alpha, x_\text{shift}, y_\text{shift}$, per un vettore $\Vec{x}=[x^{(1)}\dots, x^{(d)}] \in \mathbb{R}^d$, l'etichetta $y$ è calcolata con la funzione
     \begin{equation}\label{eq:pacman_dataset_lf}
     \textrm{lfpar}(\Vec{x})= x^{(d)} - \sum_{j=1}^{d-1}\alpha(x^{(j)} - x_\text{shift})^2 - y_\text{shift}.
     \end{equation}
     Il parametro $\alpha$ controlla l'ampiezza del paraboloide, mentre $x_\text{shift}$ e $y_\text{shift}$ traslano il vertice del paraboloide.
-    La~\Cref{fig:pacman_dataset} mostra alcuni esempi di \emph{dataset} e funzioni di etichettatura al variare dei parametri.
+    L'ampiezza della funzione influisce su grado di non-linearità della funzione di etichettamento, e di conseguenza influenza la complessità dei classificatori prodotti.
+    La~\Cref{fig:pacman_dataset} mostra alcuni esempi di \emph{dataset} bidimensionali e funzioni di etichettamento al variare dei parametri.
 \end{itemize}
 \begin{figure}
     \centering
@@ -63,7 +68,7 @@ Per decidere l'etichetta di un punto sono state utilizzate due tipologie di funz
     \caption[Esempio di \emph{dataset} sintetici generati con funzione paraboloide.]{Esempio di \emph{dataset} sintetici generati con funzione paraboloide. Il parametro $\alpha$ controlla l'ampiezza della funzione di etichettamento.}
     \label{fig:pacman_dataset}
 \end{figure}
-A prescindere dalla funzione di etichettatura utilizzata, la procedura di generazione del \emph{dataset} è descritta nell'\Cref{alg:generazione_dataset_sintetici}.
+A prescindere dalla funzione di etichettamento utilizzata, la procedura di generazione del \emph{dataset} è descritta nell'\Cref{alg:generazione_dataset_sintetici}.
 Questa procedura richiede diversi parametri, descritti nell'elenco seguente.
 \begin{itemize}
     \item Il parametro $n$ che identifica la dimensione totale del \emph{dataset}.
@@ -89,12 +94,12 @@ Questa procedura richiede diversi parametri, descritti nell'elenco seguente.
     }
     \KwResult{Una matrice $X$ contenente $n$ vettori e un vettore $y$ contenente $n$ etichette, suddivisi in addestramento e \emph{test}}
     Inizializza il generatore casuale utilizzando il seme $s$\;
-    $X_{\text{pop}} \gets$ seleziona a caso $10n$ elementi uniformemente a caso\;
+    $X_{\text{pop}} \gets$ seleziona a caso $10n$ elementi uniformemente a caso da una distribuzione gaussiana multivariata (se utilizzando la funzione paraboloide) o da una distribuzione uniforme (se utilizzando la funzione sinusoidale)\;
     $y_{\text{pop}} \gets$ etichette dei vettori $X_{\text{pop}}$\;
     %
     $N_p \gets \lfloor\frac{n}{p + 1}\rfloor$\;
     $N_n \gets n - N_p$\;
-    $X, y \gets$ seleziona da $X_{\text{pop}}$ uniformemente a caso $N_p$ elementi con le rispettive etichette positiva e seleziona da $X_{\text{pop}}$ uniformemente a caso $N_p$ elementi con le rispettive etichette negative\;
+    $X, y \gets$ seleziona uniformemente a caso $N_p$ elementi con classe positiva e $N_p$ elementi con classe negativa da $X_{\text{pop}}$ con le rispettive etichette da $y_{\text{pop}}$\;   
     seleziona a caso $\lfloor rN_p \rfloor$\ esempi della classe positiva e $\lfloor r  N_n \rfloor$\ elementi della classe negativa e inverti le loro etichette\;
     $X_{\text{test}}, y_{\text{test}} \gets$ seleziona \emph{test\_size} elementi (con rispettive etichette) a caso come test set\;
     $X_{\text{train}} \gets X \setminus X_{\text{test}}$\;
@@ -109,7 +114,7 @@ Questa procedura richiede diversi parametri, descritti nell'elenco seguente.
 % \begin{equation}\label{eq:sinusoid_dataset_lf}
 % lf(\Vec{x}) = \sign\left(\frac{1}{(1 + \exp(-\beta(x_1 - 0.5)) + \rho \sin(2\pi\theta x_1)} - x2\right).
 % \end{equation}
-% Questa funzione di etichettatura è utilizzata solo per dati in spazi con due dimensioni. La~\cref{fig:sinusoid_dataset} mostra alcuni esempi di \emph{dataset} e funzioni di etichettatura al variare dei parametri.
+% Questa funzione di etichettamento è utilizzata solo per dati in spazi con due dimensioni. La~\cref{fig:sinusoid_dataset} mostra alcuni esempi di \emph{dataset} e funzioni di etichettamento al variare dei parametri.
 % \begin{figure}
 %     \centering
 %     \includegraphics[width=1\linewidth]{img/sinusoid_dataset_param_influence.pdf}
@@ -123,21 +128,21 @@ Questa procedura richiede diversi parametri, descritti nell'elenco seguente.
 % lf(\Vec{x})= x_n - \sum_{i=1}^{n-1}\alpha(x_i - x_\text{shift})^2 - y_\text{shift}.
 % \end{equation}
 % Il parametro $\alpha$ controlla l'ampiezza del paraboloide, mentre $x_\text{shift}$ e $y_\text{shift}$ traslano il vertice del paraboloide.
-% La~\Cref{fig:pacman_dataset} mostra alcuni esempi di \emph{dataset} e funzioni di etichettatura al variare dei parametri.
+% La~\Cref{fig:pacman_dataset} mostra alcuni esempi di \emph{dataset} e funzioni di etichettamento al variare dei parametri.
 % \begin{figure}
 %     \centering
 %     \includegraphics[width=1\linewidth]{img/pacman_dataset_param_influence.pdf}
 %     \caption{Esempio di \emph{dataset} etichettati con paraboloide. Il parametro $\alpha$ controlla l'ampiezza.}
 %     \label{fig:pacman_dataset}
 % \end{figure}
-I parametri per le funzioni di etichettatura utilizzati per la generazione dei \emph{dataset} sono scelti in modo da avere vari livelli di difficoltà di classificazione, misurata con le metriche esposte in~\Cref{sec:metriche_dataset}.
+I parametri per le funzioni di etichettamento utilizzati per la generazione dei \emph{dataset} sono scelti in modo da avere vari livelli di difficoltà di classificazione, misurata con le metriche esposte in~\Cref{sec:metriche_dataset}.
 La difficoltà può essere gradualmente aumentata per esempio stringendo progressivamente il paraboloide o aumentando la frequenza o l'ampiezza della funzione sinusoidale.
 
-La procedura nell'\Cref{alg:generazione_dataset_sintetici} utilizza delle estrazioni casuali in diversi punti:
+L'\Cref{alg:generazione_dataset_sintetici} per la generazione di \emph{dataset} è un algoritmo randomizzato:
 \begin{itemize}
-    \item per selezionare la popolazione iniziale;
-    \item per estrarre i dati di test;
-    \item eventualmente nella procedura di introduzione del rumore, per selezionare gli esempi a cui invertire l'etichetta.
+    \item la popolazione iniziale è estratta a caso;
+    \item i dati di test sono selezionati a caso;
+    \item se si introduce del rumore, la selezione degli esempi a cui invertire l'etichetta è effettuata a caso.
 \end{itemize}
 
 \subsection{Dataset di terze parti}
@@ -170,25 +175,27 @@ A prescindere dai \emph{dataset} utilizzati, la maggior parte degli esperimenti 
 Questi aspetti sono discussi nei prossimi paragrafi.
 
 \subsection{Strategia 1}
-Il procedimento è descritto di seguito. Per prima cosa si addestra un modello SVM tradizionale senza nessun vincolo sul numero di vettori di supporto. Chiamiamo questo modello $FM$ e chiamiamo $FB$ il numero di vettori di supporto di $FM$.
-In seguito, si addestrano una serie di modelli con un \emph{budget} pari a una frazione di $FB$.
-Per ognuno di questi modelli il \emph{budget} è espresso come $B=pFM$, dove
+Il procedimento è descritto di seguito. Per prima cosa si addestra un modello SVM tradizionale senza nessun vincolo sul numero di vettori di supporto. 
+Si identifica questo modello con la sigla $H$ e si chiama $s$ il numero di vettori di supporto di $H$.
+In seguito, si addestrano una serie di modelli con un \emph{budget} pari a una frazione di $s$.
+Per ognuno di questi modelli il \emph{budget} è espresso come $b=ps$, dove
 \begin{equation*}
     p\in\{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9\}.
 \end{equation*}
-Nei grafici dei risultati ottenuti con questa strategia compare anche il valore di \emph{budget} che corrisponde a $p=1$: indica dei modelli classici senza nessun vincolo di \emph{budget}.
+Si identifica con la sigla $H_b$ il modello con \emph{budget} $b$ e si indica con $s_b$ il rispettivo numero di vettori di supporto.
+Nei grafici dei risultati ottenuti con questa strategia compare anche il valore di \emph{budget} che corrisponde a $p=1$: indica dei modelli classici senza nessun vincolo di \emph{budget}. In questo modo risulta più comodo confrontare i risultati dei modelli con \emph{budget} rispetto a modelli classici.
 Nell'\Cref{alg:esperimenti_1} è descritto lo pseudocodice per la strategia.
-\begin{algorithm}
+\begin{algorithm}[t]
     \SetAlgoLined
     \KwData{\emph{dataset} da analizzare}
     %\KwResult{}
-    $FM \gets$ seleziona il miglior modello senza imporre nessun vincolo di \emph{budget}\;
-    $FB \gets$ numero di vettori di supporto del modello $FM$\;
-    salva parametri e dettagli di $FM$\;
+    $H \gets$ seleziona il modello classico con i migliori iperparametri\;
+    $s \gets$ numero di vettori di supporto del modello $H$\;
+    salva parametri e dettagli di $H$\;
     \For{$p\gets0.3$ \KwTo $0.9$ \KwBy $0.1$}{
-        $B\gets pFB$\;
-        $M \gets$ seleziona il miglior modello con $\text{budget}=B$\;
-        salva parametri e dettagli di $M$\;
+        $b\gets ps$\;
+        $H_b \gets$ seleziona il miglior modello con $\emph{budget}=b$\;
+        salva parametri e dettagli di $H_b$\;
     }
 \caption{Pseudocodice strategia 1.}
 \label{alg:esperimenti_1}
@@ -202,9 +209,9 @@ Per ogni modello, si definisce \emph{score ratio} la quantità
 
 Con questi esperimenti è possibile ottenere delle indicazioni su quanto sia possibile ridurre il \emph{budget} senza penalizzare troppo l'accuratezza, limitatamente ai \emph{dataset} considerati e in rapporto alla controparte senza vincolo sul \emph{budget}.
 
-Per mitigare un eventuale \emph{bias} dovuto alla casualità nella generazione del dataset, si è deciso in alcuni casi di generare tre \emph{dataset} per ogni gruppo di parametri utilizzando altrettanti valori del parametro seme.
+Per mitigare un eventuale \emph{bias} dovuto alla casualità nella generazione dei dati, si è deciso in alcuni casi di generare tre \emph{dataset} per ogni gruppo di parametri utilizzando altrettanti valori del parametro seme.
 La procedura completa, in questo caso, è descritta nell'~\Cref{alg:esperimenti_2}.
-\begin{algorithm}
+\begin{algorithm}[t]
     \SetAlgoLined
     \KwData{\emph{parametri\_dataset} $\gets$ le varie combinazioni di parametri per generare dataset.}    
     \For{$s \gets \text{estrai nuovo seme}$}{
@@ -216,6 +223,10 @@ La procedura completa, in questo caso, è descritta nell'~\Cref{alg:esperimenti_
 \caption{Pseudocodice esperimenti con strategia 1 e con ripetizione della generazione dei dataset.}
 \label{alg:esperimenti_2}
 \end{algorithm}
+I risultati ottenuti sui tre \emph{dataset} con stessi parametri sono aggregati in base alla percentuale di \emph{budget}.
+Questo approccio è utilizzato per gli esperimenti effettuati su \emph{dataset} sintetici e per il successivo confronto con altri metodi (sempre sugli stessi \emph{dataset}).
+
+Gli esperimenti effettuati su \emph{dataset} sintetici bidimensionali con la strategia descritta in questo paragrafo, sono eseguiti con ripetizione della generazione \emph{dataset} (\Cref{alg:esperimenti_2}). Tutti gli altri esperimenti sono stati eseguiti utilizzando la variante che genera un \emph{dataset} una sola volta.
 
 \subsection{Strategia 2}
 Un secondo approccio per eseguire gli esperimenti su un certo \emph{dataset} consiste nell'esprimere il \emph{budget} in funzione della dimensione del \emph{dataset} invece che in funzione del numero di vettori di supporto di un modello classico.
@@ -226,14 +237,14 @@ Questa strategia è descritta nell'\Cref{alg:esperimenti_3}.
     %\KwResult{}
     $m \gets |\textit{dataset}|$\;
     \For{$p$ \KwIn $\{0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2\}$}{
-        $B\gets pm$\;
-        $M \gets$ seleziona il miglior modello con \emph{budget} $B$ su \emph{dataset}\;
-        salva parametri e dettagli di $M$\;
+        $b\gets pm$\;
+        $H_b \gets$ seleziona il miglior modello con \emph{budget} $b$ su \emph{dataset}\;
+        salva parametri e dettagli di $H_b$\;
     }
 \caption{Pseudocodice strategia 2.}
 \label{alg:esperimenti_3}
 \end{algorithm}
-Per un certo \emph{dataset} composto da $m$ elementi, si esprime il \emph{budget} come $B=pm$, dove
+Per un certo insieme di dati di addestramento composto da $m$ elementi, si esprime il \emph{budget} come $b=pm$, dove
 \begin{equation*}
     p\in\{0.01, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2\}.
 \end{equation*}
@@ -245,6 +256,12 @@ Per gli esperimenti effettuati con questa strategia, i \emph{dataset} sintetici 
 Ogni modello è valutato sullo stesso insieme di dati di \emph{test} per ogni \emph{dataset}.
 Nel caso dei dati di terze parti, l'insieme di \emph{test} è già fornito, mentre nel caso di dati sintetici l'insieme di \emph{test} viene selezionato dopo la procedura di generazione e non viene più modificato.
 L'insieme di \emph{test} è scelto casualmente, ma mantiene il bilanciamento delle classi dei dati di addestramento.
+
+I valori considerati per valutare la bontà di un modello sono:
+\begin{itemize}
+    \item l'accuratezza sui dati di \emph{test};
+    \item lo \emph{score ratio} in caso sia utilizzata la strategia 1.
+\end{itemize}
 
 I migliori iperparametri sono selezionati sui dati di addestramento utilizzando \emph{5-fold cross validation}, con una ricerca esaustiva sulla griglia di parametri descritta in~\Cref{tab:gridsearch_2d}.
 \begin{table}
@@ -272,120 +289,117 @@ Per cercare di ridurre il carico computazionale, gli esperimenti effettuati util
 
 Il limite massimo di tempo concesso al risolutore per risolvere ogni istanza del problema di ottimizzazione è di sessanta secondi.
 
-\section{Esperimenti su dataset sintetici 2D}\label{sec:exp:synth_2d}
+\section{Esperimenti su dataset sintetici bidimensionali}\label{sec:exp:synth_2d}
 Si riportano in questo paragrafo i risultati degli esperimenti effettuati sui \emph{dataset} sintetici generati con le configurazioni di parametri riportate nelle~\Cref{tab:parametri_ds_sin,tab:parametri_ds_pacman}.
 \begin{table}
     \centering
-    \begin{tabular}{ccccc}
+    \begin{tabular}{rrr}
         \toprule
-         $n$ & \emph{test\_size} & $\beta$ & $\rho$ & $\theta$ \\
+         $\beta$ & $\rho$ & $\theta$ \\
         \midrule
-        \multirow{10}{*}{1000} & \multirow{10}{*}{0.3} &\multirow{5}{*}{0}  & 0.01  & \multirow{5}{*}{20} \\        
-                            &&& 0.025 &     \\        
-                            &&& 0.05  &     \\        
-                            &&& 0.075 &     \\        
-                            &&& 0.1   &     \\
-        \cline{3-5}
-                &&  95      & 0.2   & 10    \\   
-        \cline{3-5}
-        &&  \multirow{4}{*}{0}  & \multirow{4}{*}{0.1}  & 1     \\    
-                            &&&                       & 2     \\    
-                            &&&                       & 5     \\    
-                            &&&                       & 1     \\    
+        \multirow{5}{*}{0}  & 0.01  & \multirow{5}{*}{20} \\        
+                            & 0.025 &     \\        
+                            & 0.05  &     \\        
+                            & 0.075 &     \\        
+                            & 0.1   &     \\
+        
+        95                  & 0.2   & 10    \\   
+
+        \multirow{4}{*}{0}  & \multirow{4}{*}{0.1}  & 1     \\    
+                            &                       & 2     \\    
+                            &                       & 5     \\    
+                            &                       & 1     \\    
         \bottomrule
     \end{tabular}
-    \caption{Configurazioni di parametri utilizzati per generare \emph{dataset} bidimensionali con la funzione sinusoidale (\ref{eq:sinusoid_dataset_lf}).}
+    \caption{Configurazioni di parametri utilizzati per generare \emph{dataset} bidimensionali con la funzione sinusoidale (\ref{eq:sinusoid_dataset_lf}). Ognuna di queste configurazioni di iperparametri ha in comune gli aggiuntivi $n=1000$ che identifica la dimensione totale del \emph{dataset} e $\emph{test\_size}=0.3$ che identifica la porzione di dati da mantenere come \emph{test}.}
     \label{tab:parametri_ds_sin}
 \end{table}
 \begin{table}
     \centering
-    \begin{tabular}{ccccc}
+    \begin{tabular}{r}
         \toprule
-         $n$ & \emph{test\_size} &$\alpha$ & $x_\text{shift}$ & $y_\text{shift}$ \\
+        $\alpha$\\
         \midrule
-        \multirow{5}{*}{1000} & \multirow{5}{*}{0.3} &1   & \multirow{5}{*}{0.5} & \multirow{5}{*}{0.5} \\
-        && 2.5 &\\
-        && 5   &\\
-        && 7.5 &\\
-        && 10  &\\
+        1   \\
+        2.5 \\
+        5   \\
+        7.5 \\
+        10  \\
         \bottomrule
     \end{tabular}
-    \caption{Configurazioni di parametri utilizzati per generare \emph{dataset} bidimensionali con la funzione parabola (\ref{eq:pacman_dataset_lf}).}
+    \caption{Configurazioni di parametri utilizzati per generare \emph{dataset} bidimensionali con la funzione parabola (\ref{eq:pacman_dataset_lf}). Ognuna di queste configurazioni di iperparametri ha in comune gli aggiuntivi $n=1000$ che identifica la dimensione totale del \emph{dataset}, $\emph{test\_size}=0.3$ che identifica la porzione di dati da mantenere come \emph{test}, $x_\text{shift}=0.5, y_\text{shift}=0.5$ che traslano il vertice della parabola nel punto $(0.5,0.5)$.}
     \label{tab:parametri_ds_pacman}
 \end{table}
 
 \subsubsection{Esperimenti utilizzando la strategia 1}
 La~\Cref{fig:risultati_2d} mostra dei grafici che riportano l'andamento dell'accuratezza e dello \emph{score ratio} ottenuti sui dati di \emph{test} al variare del \emph{budget}.
-Questa figura mostra solo i risultati più significativi; i grafici omessi sono riportati nell'Appendice A.
+Questa figura mostra i risultati degli esperimenti più significativi; i grafici omessi sono riportati nell'Appendice A.
+Questi esperimenti sono stati effettuati generando tre \emph{dataset} con seme diverso per ogni gruppo di parametri (\Cref{alg:esperimenti_2}).
 
-Dai risultati ottenuti è possibile notare come per \emph{dataset} semplici, o con una funzione di etichettatura sinusoidale con tante oscillazioni ma ben approssimabile da una funzione lineare, il metodo proposto risulta efficace, portando a una riduzione significativa del numero di vettori di supporto senza pagare troppo in termini di accuratezza.
+Dai risultati ottenuti è possibile notare come per \emph{dataset} semplici, o con una funzione di etichettamento sinusoidale con tante oscillazioni ma ben approssimabile da una funzione lineare, il metodo proposto risulta efficace, portando a una riduzione significativa del numero di vettori di supporto senza pagare troppo in termini di accuratezza.
 In altri casi, invece, con \emph{dataset} più difficili, il comportamento è diverso:
 \begin{itemize}
     \item per piccole riduzioni di \emph{budget}, come $80\%$ e $90\%$ del numero di vettori di supporto del modello tradizionale, la perdita in accuratezza è moderata;
-    \item per valori di \emph{budget} intermedi nel range considerato, tra il $40\%$ e il $70\%$ la perdita di accuratezza è più grave e marcata;
-    \item per valori di \emph{budget} piccoli, come $30\%$ o $40\%$, l'accuratezza è migliore di quella ottenuta per diminuzioni di \emph{budget} tra il $40\%$ e il $70\%$.
+    \item per valori di \emph{budget} intermedi nel range considerato, tra il $40\%$ e il $70\%$ del numero di vettori di supporto del modello tradizionale, la perdita di accuratezza è più grave e marcata;
+    \item per valori di \emph{budget} piccoli, come $30\%$ o $40\%$ del numero di vettori di supporto del modello tradizionale, l'accuratezza è migliore di quella ottenuta per diminuzioni di \emph{budget} tra il $40\%$ e il $70\%$.
+    Questo risultato è inatteso, perché una quantità minore di vettori di supporto dovrebbe costringere a modellare una superficie di separazione molto più semplice di quella effettiva. 
 \end{itemize}
 Sempre per i \emph{dataset} più difficili, si nota anche un'alta variabilità nei risultati ottenuti nel gruppo di \emph{dataset} generati con stessi parametri ma seme diverso, con alcune istanze che esibiscono accuratezza molto bassa.
 Dalla~\Cref{fig:risultati_2d} è possibile notare come i modelli peggiori siano associati a un'istanza del problema \emph{budgeted SVC} non risolta all'ottimo, perché il risolutore ha raggiunto il limite massimo di tempo concesso e ha restituito una soluzione non ottimale.
-L'interpretazione è quindi che per riduzioni di \emph{budget} intermedie, il risolutore faccia più fatica a modellare la funzione originale perché non può utilizzare abbastanza vettori di supporto, mentre per \emph{budget} più ristretti la soluzione del problema sia più semplice perché è possibile escludere più velocemente un maggior numero di soluzioni.
+Una possibile spiegazione è che per riduzioni di \emph{budget} intermedie, il risolutore faccia più fatica a modellare la funzione originale perché non può utilizzare abbastanza vettori di supporto, mentre per \emph{budget} più ristretti la soluzione del problema sia più semplice perché è possibile escludere più velocemente un maggior numero di soluzioni.
 
 Nei casi in cui si riscontra alta variabilità (utilizzando la stesa riduzione di \emph{budget} sullo stesso gruppo di \emph{dataset}) si può notare come si ottengano anche modelli buoni, spesso costruiti con una soluzione ottima.
-\begin{figure}
-    \begin{subfigure}{.5\textwidth}
+\begin{figure}[b!]
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d/3.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d/4.pdf}
     \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/4.pdf}
-    \end{subfigure}%
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d/8.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d/8.pdf}
     \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/9.pdf}
-    \end{subfigure}%
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d/10.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d/9.pdf}
     \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d/12.pdf}
-    \end{subfigure}%
-     %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d/13.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d/10.pdf}
     \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
+    \caption[Risultati su \emph{dataset} sintetici utilizzando la strategia 1.]{Risultati più significativi ottenuti su \emph{dataset} sintetici bidimensionali utilizzando la strategia 1. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici al centro indica lo \emph{score ratio} al variare del \emph{budget} (un simbolo ``x'' indica che il risolutore ha prodotto una soluzione non ottima); ognuno dei grafici a destra rappresenta uno dei tre \emph{dataset} utilizzati con le rispettive metriche di difficoltà.}
+\end{figure}
+\begin{figure}[ht]\ContinuedFloat
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d/14.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d/12.pdf}
     \end{subfigure}%
-     %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d/15.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d/13.pdf}
     \end{subfigure}%
-    \caption[Risultati su \emph{dataset} sintetici utilizzando la strategia 1.]{Risultati più significativi ottenuti su \emph{dataset} sintetici 2D utilizzando la strategia 1. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici al centro indica lo \emph{score ratio} al variare del \emph{budget} (un simbolo ``x'' indica che il risolutore ha prodotto una soluzione non ottima); ognuno dei grafici a destra rappresenta uno dei tre \emph{dataset} utilizzati con le rispettive metriche di difficoltà.}
+    \hfill
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=.8\textwidth]{img/2d/14.pdf}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=.8\textwidth]{img/2d/15.pdf}
+    \end{subfigure}%
+    \caption[Risultati su \emph{dataset} sintetici utilizzando la strategia 1.]{Risultati più significativi ottenuti su \emph{dataset} sintetici bidimensionali utilizzando la strategia 1. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici al centro indica lo \emph{score ratio} al variare del \emph{budget} (un simbolo ``x'' indica che il risolutore ha prodotto una soluzione non ottima); ognuno dei grafici a destra rappresenta uno dei tre \emph{dataset} utilizzati con le rispettive metriche di difficoltà.}
 \label{fig:risultati_2d}
 \end{figure}
 
 % magari full_budget partiva già con "pochi" sv e ridurli porta ad accuracy molto più basse... ma non so
 
-Analizzando il numero di vettori di supporto dei modelli tradizionali (vedi ~\Cref{fig:2d_dist_numsv}) è possibile notare come la maggior parte dei modelli abbia un numero ragionevole di vettori di supporto ma come una minoranza abbia invece un numero molto elevato.
+Analizzando il numero di vettori di supporto dei modelli tradizionali (vedi ~\Cref{fig:2d_dist_numsv}) è possibile notare come la maggior parte dei modelli abbia un numero ragionevole di vettori di supporto:
+la metà di questi modelli utilizza un numero di vettori di supporto $<125$, che corrisponde a $\approx18\%$ della dimensione dell'insieme di addestramento. 
+Allo stesso tempo, il resto dei modelli utilizza un numero maggiore di vettori di supporto (fino a $\approx350$) e con pochi modelli \emph{outlier} che utilizzano praticamente l'intero insieme di dati come insieme di vettori di supporto.
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{img/2d/numsv.pdf}
@@ -394,64 +408,56 @@ Analizzando il numero di vettori di supporto dei modelli tradizionali (vedi ~\Cr
 \end{figure}
 
 \subsubsection{Risultati ottenuti utilizzando la strategia 2}
-Utilizzando gli stessi \emph{dataset} dell'esperimento precedente, sono stati effettuati ulteriori esperimenti utilizzando la strategia 2.
+Utilizzando gli stessi \emph{dataset} della strategia analizzata nel paragrafo precedente, sono stati effettuati ulteriori esperimenti utilizzando la strategia 2.
 In~\Cref{fig:2d_v2} si riporta l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget} per ogni \emph{dataset}.
-Questa figura mostra solo i risultati più significativi; i grafici omessi sono riportati nell'Appendice A.
+Questa figura mostra i risultati degli esperimenti più significativi; i grafici omessi sono riportati nell'Appendice A.
 
-\begin{figure}
-    \begin{subfigure}{.5\textwidth}
+\begin{figure}[b!]
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d_v2/4.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d_v2/4.pdf}
     \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d_v2/5.pdf}
-    \end{subfigure}
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d_v2/7.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d_v2/7.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/2d_v2/8.pdf}
-    \end{subfigure}%
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d_v2/12.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d_v2/12.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
+    \caption[Risultati su \emph{dataset} sintetici utilizzando la strategia 2.]{Risultati più significativi ottenuti su \emph{dataset} sintetici bidimensionali utilizzando la strategia 2. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici a destra rappresenta il \emph{dataset} utilizzato con le rispettive metriche di difficoltà.}
+\end{figure}
+\begin{figure}[ht]\ContinuedFloat
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d_v2/13.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d_v2/13.pdf}
     \end{subfigure}%
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d_v2/14.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d_v2/14.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
+    \hfill
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{img/2d_v2/15.pdf}
+        \includegraphics[width=.8\textwidth]{img/2d_v2/15.pdf}
     \end{subfigure}%
-\caption[Risultati su \emph{dataset} sintetici utilizzando la strategia 2.]{Risultati più significativi ottenuti su \emph{dataset} sintetici 2D utilizzando la strategia 2. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici a destra rappresenta il \emph{dataset} utilizzato con le rispettive metriche di difficoltà.}
+\caption[Risultati su \emph{dataset} sintetici utilizzando la strategia 2.]{Risultati più significativi ottenuti su \emph{dataset} sintetici bidimensionali utilizzando la strategia 2. Ognuno dei grafici a sinistra indica l'andamento dell'accuratezza sui dati di \emph{test} al variare del \emph{budget}; ognuno dei grafici a destra rappresenta il \emph{dataset} utilizzato con le rispettive metriche di difficoltà.}
 \label{fig:2d_v2}
 \end{figure}
-Dai risultati ottenuti si può notare come anche per la maggior parte dei \emph{dataset} difficili sia possibile utilizzare un \emph{budget} stringente, tra il $7\%$ e il $10\%$, con perdite accettabili di accuratezza.
-Questo comportamento è in linea con le osservazioni fatte per l'esperimento precedente, dove per valori di \emph{budget} stringenti ($30\%$ per la strategia 1, che ricade nella maggior parte dei casi nell'intervallo $7\%-15\%$ della strategia 2) la perdita di accuratezza riscontrata non è così marcata.
+Dai risultati ottenuti si può notare come anche per la maggior parte dei \emph{dataset} difficili sia possibile utilizzare un \emph{budget} stringente, tra il $7\%$ e il $10\%$ della dimensione del \emph{train set}, con perdite accettabili di accuratezza.
+Questo comportamento è in linea con le osservazioni fatte per la strategia precedente, dove per valori di \emph{budget} stringenti ($30\%$ del numero di vettori di supporto del modello tradizionale, che ricade nella maggior parte dei casi nell'intervallo $7\%-15\%$ della dimensione del \emph{train set}) la perdita di accuratezza riscontrata non è così marcata.
 
-Su \emph{dataset} per cui una superficie di separazione lineare approssima in modo soddisfacente la funzione di etichettatura originale, la riduzione di \emph{budget} può essere molto importante: anche con \emph{budget} pari all'$1\%$ della dimensione del \emph{dataset} si ottiene un'accuratezza pari a quella ottenuta con \emph{budget} molto più alti.
+Su \emph{dataset} per cui una superficie di separazione lineare approssima in modo soddisfacente la funzione di etichettamento originale, la riduzione di \emph{budget} può essere molto importante: anche con \emph{budget} pari all'$1\%$ della dimensione del \emph{dataset} si ottiene un'accuratezza pari a quella ottenuta con \emph{budget} molto più alti.
 
 In generale, è possibile identificare per ogni \emph{dataset} un valore soglia di \emph{budget} per cui l'accuratezza è simile a quella ottenuta con valori di \emph{budget} più alti. 
-L'accuratezza invece ottenuta con valori di \emph{budget} minori del valore soglia diminuisce significativamente al diminuire del \emph{budget}.
+L'accuratezza invece ottenuta con valori di \emph{budget} minori del valore soglia diminuisce significativamente (più o meno rapidamente) al diminuire del \emph{budget}.
+
+
 \section{Esperimenti su dataset sintetici 3D}\label{sec:exp:synth_3d}
-Una piccola parte degli esperimenti è stata effettuata su \emph{dataset} in tre dimensioni generati con la funzione di etichettatura paraboloide.
+Per avere un'idea di cosa succede quando la dimensionalità degli esempi aumenta, sono stati effettuati degli esperimenti preliminari utilizzando la strategia 1 su \emph{dataset} tridimensionali generati (una sola volta con un singolo seme) con la funzione di etichettamento parabola.
 Questi \emph{dataset} sono composti da 5600 elementi di addestramento e da 2400 di \emph{test}.
 In~\Cref{fig:3d_exp} si visualizza l'andamento dell'accuratezza e dello \emph{score ratio} al variare del \emph{budget}.
 \begin{figure}
@@ -469,35 +475,35 @@ In~\Cref{fig:3d_exp} si visualizza l'andamento dell'accuratezza e dello \emph{sc
         \centering
         \includegraphics[width=\textwidth]{img/3d/3.pdf}
     \end{subfigure}%
-\caption{Esperimenti su \emph{dataset} sintetici 3D utilizzando la strategia 1. A sinistra l'accuratezza sui dati di test al variare del \emph{budget}; al centro lo ``score ratio'' al variare del \emph{budget}; a destra il \emph{dataset} ridotto a due dimensioni utilizzando \emph{principal component analysis}.}
+\caption{Esperimenti su \emph{dataset} sintetici tridimensionali utilizzando la strategia 1. A sinistra l'accuratezza sui dati di test al variare del \emph{budget}; al centro lo \emph{score ratio} al variare del \emph{budget}; a destra il \emph{dataset} ridotto a due dimensioni utilizzando \emph{principal component analysis}.}
 \label{fig:3d_exp}
 \end{figure}
-Dai risultati ottenuti si nota che per valori di \emph{budget} alti ($80/90\%$) l'andamento dei valori misurati sia in linea con le aspettative, calando proporzionalmente alla riduzione di \emph{budget}.
+Dai risultati ottenuti si nota che per valori di \emph{budget} alti ($80/90\%$ del numero di vettori di supporto di un modello classico) l'andamento dei valori misurati sia in linea con le aspettative, calando proporzionalmente alla riduzione di \emph{budget}.
 Tuttavia, l'accuratezza dei modelli con \emph{budget} più ristretti sale fino a superare l'accuratezza dei modelli classici, abbastanza bassa in termini assoluti.
 Inoltre, i modelli classici utilizzano una quantità di vettori di supporto molto vicina alla dimensione dell'intero insieme di addestramento.
 Questo comportamento è inatteso e meriterebbe un approfondimento futuro, non eseguito in questa tesi a causa dell'elevato tempo di calcolo richiesto per addestrare e selezionare i modelli.
 
 \section{Esperimenti su dataset di terze parti}\label{sec:exp:real_ds}
-Utilizzando i \emph{dataset} descritti nella~\Cref{tab:uci_datasets} sono stati effettuati degli esperimenti con le diverse strategie.
+Le due strategie introdotte nel~\Cref{sec:impostazione_esperimenti} sono state utilizzate anche per eseguire esperimenti sui \emph{dataset} descritti nella~\Cref{tab:uci_datasets}.
 
-I risultati ottenuti utilizzando la strategia 1 sono illustrati in~\Cref{fig:TP_old_strategy}.
+I risultati ottenuti con gli esperimenti più significativi utilizzando la strategia 1 sono illustrati in~\Cref{fig:TP_old_strategy}. I grafici omessi sono mostrati nell'Appendice A.
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{img//TP/tp_old_strategy.pdf}
-    \caption[Risultati degli esperimenti su \emph{dataset} di terze parti utilizzando la strategia 1.]{Risultati esperimenti su \emph{dataset} di terze parti utilizzando la strategia 1. A sinistra l'accuratezza sui dati di test al variare del \emph{budget}; a destra lo \emph{score ratio} al variare del \emph{budget}.}
+    \caption[Risultati degli esperimenti su \emph{dataset} di terze parti utilizzando la strategia 1.]{Risultati degli esperimenti su \emph{dataset} di terze parti utilizzando la strategia 1. A sinistra l'accuratezza sui dati di test al variare del \emph{budget}; a destra lo \emph{score ratio} al variare del \emph{budget}.}
     \label{fig:TP_old_strategy}
 \end{figure}
-Si può notare come su questi \emph{dataset} tutte le riduzioni di \emph{budget} utilizzate siano efficaci e non risultino in perdite di accuratezza significative: ogni modello \emph{budgeted SVC} è sostanzialmente equivalente come bontà al rispettivo modello classico.
-L'accuratezza ottenuta sul \emph{dataset gisette} indica come nessuno dei modelli prodotti sia efficace a modellare quel problema; questo risultato non è preoccupante perché le caratteristiche di questi dati rendono il problema particolarmente difficile: questo \emph{dataset} è di dimensione modesta (6000 elementi di addestramento) rispetto al numero degli attributi (5000).
+Si può notare che su questi \emph{dataset} tutte le riduzioni di \emph{budget} utilizzate sono efficaci e non risultano in perdite di accuratezza significative: ogni modello \emph{budgeted SVC} è sostanzialmente equivalente in accuratezza al rispettivo modello classico.
+L'accuratezza ottenuta sul \emph{dataset gisette} indica che nessuno dei modelli prodotti è efficace nel risolvere quel problema. Questo risultato non è preoccupante perché le caratteristiche di questi dati rendono il problema particolarmente difficile: questo \emph{dataset} è di dimensione modesta (6000 elementi di addestramento) rispetto al numero degli attributi (5000).
 
-I risultati ottenuti utilizzando la strategia 2 sono illustrati in~\Cref{fig:TP_new_strategy}.
+I risultati ottenuti con gli esperimenti più significativi utilizzando la strategia 2 sono illustrati in~\Cref{fig:TP_new_strategy}. I grafici omessi sono mostrati nell'Appendice A.
 \begin{figure}
     \centering
     \includegraphics[width=0.5\linewidth]{img//TP/tp_new_strategy.pdf}
     \caption[Risultati su \emph{dataset} di terze parti utilizzando la strategia 2.]{Accuratezza al variare del \emph{budget} sui \emph{dataset} di terze parti utilizzando la strategia 2.}
     \label{fig:TP_new_strategy}
 \end{figure}
-Così come per gli analoghi esperimenti effettuati su \emph{dataset} sintetici, è possibile notare come per ogni \emph{dataset} sia possibile identificare un valore soglia di \emph{budget} che divide \emph{budget} non penalizzanti da \emph{budget} penalizzanti.
+Così come per gli analoghi esperimenti effettuati su \emph{dataset} sintetici, è possibile notare che per ogni \emph{dataset} è possibile identificare un valore soglia di \emph{budget} che divide \emph{budget} non penalizzanti da \emph{budget} penalizzanti.
 
 \section{Confronto con altri metodi}\label{sec:comparazione_metodi}
 Per meglio inquadrare i risultati ottenuti dal metodo \emph{budgeted SVC}, sono stati ripetuti gli esperimenti descritti in precedenza utilizzando delle implementazioni di metodi proposti in letteratura e descritti nel~\Cref{chap:sparse_svc}, in particolare:
@@ -506,7 +512,7 @@ Per meglio inquadrare i risultati ottenuti dal metodo \emph{budgeted SVC}, sono 
     \item \emph{NSSVM}~\cite{2020_sparse_svm}, risolutore basato su \emph{Newton method} che minimizza il numero di vettori di supporto tramite una funzione di costo adeguata.
     % \item \emph{LIB IRWLS} esposto in~\cite{LIBIRWLS}. Risolutore parallelo basato su un approssimazione \emph{greedy} della matrice \emph{kernel} e utilizzo dell'algoritmo IRWLS~\cite{IRWLS}
 \end{itemize}
-Utilizzando gli stessi \emph{dataset} sintetici generati con i parametri nelle~\Cref{tab:parametri_ds_sin,tab:parametri_ds_pacman} e utilizzando \emph{5-fold cross-validation} con una ricerca esaustiva sulla griglia di parametri adatti descritta in~\Cref{tab:gridsearch_comparazioni}, viene misurata l'accuratezza sui dati di \emph{test} per gli stessi valori di \emph{budget} utilizzati negli esperimenti precedenti.
+Utilizzando gli stessi \emph{dataset} sintetici generati con i parametri nelle~\Cref{tab:parametri_ds_sin,tab:parametri_ds_pacman} e utilizzando \emph{5-fold cross-validation} con una griglia di parametri adatti descritta in~\Cref{tab:gridsearch_comparazioni}, viene misurata l'accuratezza sui dati di \emph{test} per gli stessi valori di \emph{budget} utilizzati negli esperimenti precedenti.
 \begin{table}
     \centering
     \begin{tabular}{ccccc}
@@ -527,112 +533,99 @@ Utilizzando gli stessi \emph{dataset} sintetici generati con i parametri nelle~\
 \end{table}
 In~\Cref{fig:comp_old} si possono vedere i risultati ottenuti utilizzando la strategia 1, mentre in~\Cref{fig:comp_new} si possono vedere i risultati ottenuti utilizzando la strategia 2.
 Come per gli esperimenti precedenti, queste figure riportano i risultati più significativi, mentre i restanti grafici sono inseriti nell'Appendice A.
-\begin{figure}
-    \begin{subfigure}{.5\textwidth}
+\begin{figure}[b!]
+\centering
+    \begin{subfigure}{.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/3.pdf}
     \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/comp_old/4.pdf}
-    \end{subfigure}
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/8.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
+    \hfill
+    \begin{subfigure}{.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/9.pdf}
     \end{subfigure}%
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/10.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
+    \caption[Risultati su \emph{dataset} sintetici utilizzando strategia 1 in confronto ad altri metodi.]{Risultati più significativi ottenuti su \emph{dataset} sintetici bidimensionali utilizzando la strategia 1, analogo ai risultati in~\Cref{fig:risultati_2d} ma con una curva per ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
+\end{figure}
+\begin{figure}[ht]\ContinuedFloat
+\centering
+    \begin{subfigure}{.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/12.pdf}
     \end{subfigure}%
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/13.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
+    \hfill
+    \begin{subfigure}{.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/14.pdf}
     \end{subfigure}
-        %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_old/15.pdf}
     \end{subfigure}
-\caption[Risultati su \emph{dataset} sintetici utilizzando strategia 1 in confronto ad altri metodi.]{Risultati più significativi ottenuti su \emph{dataset} sintetici 2D utilizzando la strategia 1, analogo ai risultati in~\Cref{fig:risultati_2d} ma con una curva per ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
+\caption[Risultati su \emph{dataset} sintetici utilizzando strategia 1 in confronto ad altri metodi.]{Risultati più significativi ottenuti su \emph{dataset} sintetici bidimensionali utilizzando la strategia 1, analogo ai risultati in~\Cref{fig:risultati_2d} ma con una curva per ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
 \label{fig:comp_old}
 \end{figure}
-Confrontando i risultati ottenuti con la strategia 1, è possibile notare come anche i modelli prodotti dagli altri metodi, con frequenza minore, risultino in valori di accuratezza molto vari per i diversi \emph{dataset} generati con seme diverso.
+Confrontando i risultati ottenuti con la strategia 1, è possibile notare che anche i modelli prodotti dagli altri metodi, con frequenza minore, risultano in valori di accuratezza con una varianza non trascurabile al variare dei diversi \emph{dataset} e del seme del generatore di numeri pseudocasuali.
 Allo stesso tempo, escludendo pochi casi anomali, la perdita di accuratezza al variare di \emph{budget} ottenuta da questi metodi sembra essere più lineare rispetto alla proposta \emph{budgeted SVC}.
-\begin{figure}
-    \begin{subfigure}{.5\textwidth}
+\begin{figure}[b!]
+\centering
+    \begin{subfigure}{.8\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_new/4.pdf}
     \end{subfigure}%
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/comp_new/5.pdf}
-    \end{subfigure}
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{.8\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_new/7.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
+    \hfill
+    \begin{subfigure}{.8\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_new/8.pdf}
     \end{subfigure}%
-    %
-    \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \caption[Risultati su \emph{dataset} sintetici utilizzando strategia 2 in confronto ad altri metodi.]{Risultati più significativi ottenuti su \emph{dataset} sintetici bidimensionali utilizzando la strategia 2, analogo ai risultati in~\Cref{fig:2d_v2} ma con una curva per ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
+\end{figure}
+\begin{figure}[ht]\ContinuedFloat
+\centering
+    \begin{subfigure}{.8\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_new/12.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/comp_new/13.pdf}
-    \end{subfigure}%
-    %
     \hfill
-    %
-    \begin{subfigure}{.5\textwidth}
+    \begin{subfigure}{.8\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_new/14.pdf}
     \end{subfigure}
-    \begin{subfigure}{.5\textwidth}
+    \hfill
+    \begin{subfigure}{.8\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/comp_new/15.pdf}
     \end{subfigure}
-\caption[Risultati su \emph{dataset} sintetici utilizzando strategia 2 in confronto ad altri metodi.]{Risultati più significativi ottenuti su \emph{dataset} sintetici 2D utilizzando la strategia 2, analogo ai risultati in~\Cref{fig:2d_v2} ma con una curva per ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
+    \caption[Risultati su \emph{dataset} sintetici utilizzando strategia 2 in confronto ad altri metodi.]{Risultati più significativi ottenuti su \emph{dataset} sintetici bidimensionali utilizzando la strategia 2, analogo ai risultati in~\Cref{fig:2d_v2} ma con una curva per ogni metodo utilizzato: la proposta \emph{Budgeted SVC}, i metodi \emph{NSSVM} e \emph{BSGD}.}
 \label{fig:comp_new}
 \end{figure}
-Confrontando i risultati ottenuti con la strategia 2, si può notare come i modelli prodotti dalla formulazione \emph{budgeted SVC} siano competitivi per valori di \emph{budget} alti e come siano invece peggiori per valori di \emph{budget} bassi. 
+Confrontando i risultati ottenuti con la strategia 2, si può notare che i modelli prodotti dalla formulazione \emph{budgeted SVC} sono competitivi per valori di \emph{budget} alti e sono invece peggiori per valori di \emph{budget} bassi. 
 La perdita di accuratezza dovuta alla restrizione di \emph{budget} si manifesta per \emph{budgeted SVC} con valori di \emph{budget} più alti rispetto agli altri metodi.
 
 \section{Memorizzazione compressa dei modelli SVC}\label{sec:memorizzazione_compressa}
 Un ulteriore metodo per diminuire lo spazio di memorizzazione richiesto per un modello SVC si basa sull'osservazione che, nella formulazione \emph{soft margin}, i moltiplicatori $\alpha_i$ sono al più grandi quanto $C$, e non è quindi necessario memorizzare tutti i moltiplicatori $\alpha_i = C$.
 
-Assumendo che le etichette positive abbiano valore $+1$ e le etichette negative abbiano valore $-1$ (e considerando che si può sempre forzare questa assunzione a essere vera), si definiscono i valori:
+Considerando che le etichette per un problema di classificazione risolto con SVC hanno valore $+1$ oppure valore $-1$, si definiscono:
 \begin{itemize}
     \item $s^+ = |\{\alpha_i, i=1,\dots,m : 0 < \alpha_i < C, y_i=+1\}|$, numero di moltiplicatori con valore compreso in $(0, C)$ e con etichetta appartenente alla classe positiva;
     \item $s^- = |\{\alpha_i, i=1,\dots,m : 0 < \alpha_i < C, y_i=-1\}|$, numero di moltiplicatori con valore compreso in $(0, C)$ e con etichetta appartenente alla classe negativa;
@@ -679,7 +672,7 @@ In~\Cref{tab:compressione_spazio_risparmiato} si confrontano i requisiti di spaz
     \label{tab:compressione_spazio_risparmiato}
 \end{table}
 Come si può notare, la memorizzazione compressa consente di evitare di memorizzare $b^++b^-$ moltiplicatori rispetto alla memorizzazione classica.
-Ipotizzando che i moltiplicatori siano variabili \emph{float} da quattro \emph{byte} ciascuna, si possono risparmiare $4(b^++b^-)$ \emph{byte} relativamente ai moltiplicatori lagrangiani e $4(s^+ + s^- + b^+ + b^-)$ relativamente alle etichette, ma sono richieste cinque variabili intere aggiuntive per memorizzare $s^+, s^-, b^+, b^-, C$.
+Ipotizzando che i moltiplicatori siano variabili \emph{float} da quattro \emph{byte} ciascuna, si possono risparmiare $4(b^++b^-)$ \emph{byte} relativamente ai moltiplicatori lagrangiani e $4(s^+ + s^- + b^+ + b^-)$ variabili intere (o in teoria anche solo $4(s^+ + s^- + b^+ + b^-)$ \emph{bit}) relativamente alle etichette, ma sono richieste quattro variabili intere aggiuntive per memorizzare $s^+, s^-, b^+, b^-$ e un ulteriore \emph{float} per memorizzare $C$.
 La memorizzazione compressa è praticamente sempre conveniente in termini di spazio, ed è tanto più conveniente quanto la quantità $b^++b^-$ è grande.
 
 Per avere delle indicazioni di quanto spazio si possa risparmiare utilizzando questa rappresentazione, si mostrano nelle~\Cref{fig:dist_riduzione_synth_old,fig:dist_riduzione_synth_new} le distribuzioni delle potenziali riduzioni in spazio richiesto per memorizzare gli indici per gli esperimenti su \emph{dataset} sintetici descritti nel~\Cref{sec:exp:synth_2d} e si mostrano nelle~\Cref{fig:dist_riduzione_TP_old,fig:dist_riduzione_TP_new} le distribuzioni delle potenziali riduzioni in spazio richiesto per memorizzare gli indici per gli esperimenti su \emph{dataset} di terze parti descritti nel~\Cref{sec:exp:real_ds}.
