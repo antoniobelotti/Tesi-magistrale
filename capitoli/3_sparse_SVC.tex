@@ -244,7 +244,7 @@ Una primo tentativo prevede l'introduzione di $m$ variabili continue $\gamma_i,\
 La formulazione proposta è 
 \begin{equation}\label{eq:budget_svc:continuous_gamma_formulation}
 \begin{aligned}
-& \max_{\alpha}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j) +P(\gamma_1, \dots, \gamma_m)\\
+& \max_{\Vec{\alpha}}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j) +P(\gamma_1, \dots, \gamma_m)\\
 & \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0,                   \\
 &               && 0 \leq \alpha_i \leq \gamma_iC,   && i=1,\dots,m,  \\
 &               && 0 \leq \gamma_i \leq 1,           && i=1, \dots,m,\\
@@ -264,7 +264,7 @@ Tuttavia, l'introduzione della funzione $P$ rende il problema non quadratico: do
 Viene proposta quindi una formulazione leggermente diversa che definisce le variabili $\gamma_i$ come variabili booleane:
 \begin{equation}\label{eq:budget_svc:binary_gamma_formulation}
 \begin{aligned}
-& \max_{\alpha}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j)\\
+& \max_{\vec{\alpha}}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j)\\
 & \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0,                   \\
 &               && 0 \leq \alpha_i \leq \gamma_iC,   && i=1,\dots,m,  \\
 &               && \sum_{i=1}^{m} \gamma_i \leq B,                  \\

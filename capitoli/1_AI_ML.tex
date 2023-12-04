@@ -194,8 +194,8 @@ Il funzionamento è il seguente:
 La~\Cref{fig:kfoldcv} mostra graficamente un esempio delle suddivisioni effettuate dal metodo.
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{img/kfoldCV.jpg}
-    \caption[Esempio \emph{5-fold cross-validation}.]{Tratto da~\cite{model_evaluation}. Esempio di come \emph{5-fold cross validation} suddivide i dati di addestramento disponibili in 5 parti, utilizzandole tutte una volta come \emph{test} (i riquadri blu).}
+    \includegraphics[width=0.7\linewidth]{img/kfoldCV.pdf}
+    \caption[Esempio \emph{5-fold cross-validation}.]{Esempio di come \emph{5-fold cross validation} suddivide i dati di addestramento disponibili in 5 parti, utilizzandole tutte una volta come \emph{test} (i riquadri blu).}
     \label{fig:kfoldcv}
 \end{figure}
 Si parla di \emph{stratified k-fold cross-validation} quando la procedura mantiene la proporzione delle etichette originali nel creare le diverse suddivisioni.
@@ -264,7 +264,7 @@ In~\Cref{fig:nested_cv} si riporta un illustrazione del funzionamento.
 \begin{figure}
     \centering
     \includegraphics[width=0.8\linewidth]{img/nested_cv.pdf}
-    \caption[Esempio \emph{nested cross-validation}.]{Tratto da~\cite{model_evaluation}, esempio di \emph{nested cross-validation}.}
+    \caption[Esempio \emph{nested cross-validation}.]{Esempio di \emph{nested cross-validation}.}
     \label{fig:nested_cv}
 \end{figure}
 
@@ -306,8 +306,8 @@ In~\Cref{fig:decision_tree} si mostra un esempio di albero di decisione per un p
 Gli alberi di decisione possono anche essere utilizzati per risolvere problemi di regressione.
 
 Il processo di addestramento di un albero decisionale identifica quali sono le regole da utilizzare per raggiungere buone performance di classificazione. 
-L'algoritmo di addestramento più noto è CART. 
-In questo algoritmo, la bontà di ogni decisione, o in altre parole il criterio con cui creare i nodi interni dell'albero, viene valutata secondo una metrica, tra le più famose si annoverano: \emph{Gini impurity}, \emph{information gain} e \emph{root mean squared error (RMSE)}. 
+L'algoritmo di addestramento più noto è CART~\cite{cart}. 
+In questo algoritmo, la bontà di ogni decisione, o in altre parole il criterio con cui creare i nodi interni dell'albero, viene valutata secondo una metrica, tra le più famose si annoverano: \emph{Gini impurity}, \emph{information gain} e \emph{root mean squared error (RMSE)} (descritte in~\cite{cart}). 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{img/decision_tree.pdf}
@@ -374,7 +374,7 @@ Tuttavia, è il modello alla base per la creazione di reti neurali più compless
 
 Il percettrone multi-strato è una rete neurale composta da molteplici percettroni collegati tra loro e organizzati in più strati: strato di \emph{input}, uno o più strati nascosti e uno strato di \emph{output}. Si mostra in~\Cref{fig:NN} un esempio di questo tipo di rete. 
 A differenza del percettrone, i neuroni delle reti multi-strato utilizzano una funzione di attivazione 
-diversa, per esempio la funzione \emph{ReLU} o una funzione sigmoidea.
+diversa, per esempio la funzione \emph{ReLU} o una funzione sigmoidea~\cite{neural_networks}.
 A seconda del numero di strati nascosti è possibile suddividere questi modelli in \emph{shallow} se con pochi strati o \emph{deep} se con molti strati.
 \begin{figure}
     \centering
