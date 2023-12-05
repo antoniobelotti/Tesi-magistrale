@@ -371,7 +371,7 @@ Aggiungendo i rimanenti vincoli si ottiene la formulazione del problema duale
 \begin{aligned}
 & \max_{\vec{\alpha}}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_j\Vec{x}_i\cdot\Vec{x}_j\\
 & \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0, \\
-&               && 0 \leq \alpha_i \leq C, && i=1,\dots,m. \\
+&               && 0 < \alpha_i \leq C, && i=1,\dots,m. \\
 \end{aligned}
 \end{equation}
 Come nel caso \emph{soft margin}, $\Vec{w}^*$ e $b^*$ sono ricavati dai vettori di supporto.
@@ -472,7 +472,7 @@ L'introduzione del \emph{kernel trick} modifica il problema in~\Cref{eq:svc:soft
 \begin{aligned}
 & \max_{\vec{\alpha}}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j)\\
 & \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0, \\
-&               && 0 \leq \alpha_i \leq C, && i=1,\dots,m. \\
+&               && 0 < \alpha_i \leq C, && i=1,\dots,m. \\
 \end{aligned}
 \end{equation}
 %

@@ -246,7 +246,7 @@ La formulazione proposta è
 \begin{aligned}
 & \max_{\Vec{\alpha}}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j) +P(\gamma_1, \dots, \gamma_m)\\
 & \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0,                   \\
-&               && 0 \leq \alpha_i \leq \gamma_iC,   && i=1,\dots,m,  \\
+&               && 0 < \alpha_i \leq \gamma_iC,   && i=1,\dots,m,  \\
 &               && 0 \leq \gamma_i \leq 1,           && i=1, \dots,m,\\
 &               && \sum_{i=1}^{m} \gamma_i \leq B,                   \\
 \end{aligned}
@@ -266,7 +266,7 @@ Viene proposta quindi una formulazione leggermente diversa che definisce le vari
 \begin{aligned}
 & \max_{\vec{\alpha}}    && \sum_{i=1}^{m}\alpha_i - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}\alpha_i\alpha_jy_iy_jK(\Vec{x}_i, \Vec{x}_j)\\
 & \textrm{s.t.} && \sum_{i=1}^{m} \alpha_iy_i = 0,                   \\
-&               && 0 \leq \alpha_i \leq \gamma_iC,   && i=1,\dots,m,  \\
+&               && 0 < \alpha_i \leq \gamma_iC,   && i=1,\dots,m,  \\
 &               && \sum_{i=1}^{m} \gamma_i \leq B,                  \\
 &               && \gamma_i \in \{0,1\}.                            \\
 \end{aligned}
